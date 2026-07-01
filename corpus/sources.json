@@ -1,0 +1,74 @@
+[
+  {
+    "id": "src-001",
+    "name": "Reuters Fact Check",
+    "url": "https://www.reuters.com/fact-check/",
+    "language": "en",
+    "credibility_score": 0.95,
+    "category": "wire_service",
+    "last_indexed": "2026-05-01"
+  },
+  {
+    "id": "src-002",
+    "name": "AP Fact Check",
+    "url": "https://apnews.com/ap-fact-check",
+    "language": "en",
+    "credibility_score": 0.95,
+    "category": "wire_service",
+    "last_indexed": "2026-05-01"
+  },
+  {
+    "id": "src-003",
+    "name": "WHO",
+    "url": "https://www.who.int",
+    "language": "en_es",
+    "credibility_score": 0.97,
+    "category": "health_authority",
+    "last_indexed": "2026-05-01"
+  },
+  {
+    "id": "src-004",
+    "name": "CDC",
+    "url": "https://www.cdc.gov",
+    "language": "en_es",
+    "credibility_score": 0.97,
+    "category": "health_authority",
+    "last_indexed": "2026-05-01"
+  },
+  {
+    "id": "src-005",
+    "name": "PolitiFact",
+    "url": "https://www.politifact.com",
+    "language": "en",
+    "credibility_score": 0.90,
+    "category": "fact_checker",
+    "last_indexed": "2026-05-01"
+  },
+  {
+    "id": "src-006",
+    "name": "Snopes",
+    "url": "https://www.snopes.com",
+    "language": "en",
+    "credibility_score": 0.88,
+    "category": "fact_checker",
+    "last_indexed": "2026-05-01"
+  },
+  {
+    "id": "src-007",
+    "name": "AFP Factuel",
+    "url": "https://factuel.afp.com",
+    "language": "es",
+    "credibility_score": 0.92,
+    "category": "fact_checker",
+    "last_indexed": "2026-05-01"
+  },
+  {
+    "id": "src-008",
+    "name": "La Vanguardia Verificat",
+    "url": "https://www.lavanguardia.com/verificat",
+    "language": "es",
+    "credibility_score": 0.88,
+    "category": "fact_checker",
+    "last_indexed": "2026-05-01"
+  }
+]

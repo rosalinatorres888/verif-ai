@@ -1,0 +1,12 @@
+[
+  {"claim_id": "hc-001", "claim": "Las vacunas causan autismo.", "language": "es", "ground_truth": "false", "domain": "health"},
+  {"claim_id": "hc-002", "claim": "The Eiffel Tower is the tallest structure in Europe.", "language": "en", "ground_truth": "false", "domain": "geography"},
+  {"claim_id": "hc-003", "claim": "Drinking bleach cures COVID-19.", "language": "en", "ground_truth": "false", "domain": "health"},
+  {"claim_id": "hc-004", "claim": "El sol sale por el este.", "language": "es", "ground_truth": "true", "domain": "science"},
+  {"claim_id": "hc-005", "claim": "5G towers spread the coronavirus.", "language": "en", "ground_truth": "false", "domain": "health"},
+  {"claim_id": "hc-006", "claim": "La tierra es plana.", "language": "es", "ground_truth": "false", "domain": "science"},
+  {"claim_id": "hc-007", "claim": "Water boils at 100 degrees Celsius at sea level.", "language": "en", "ground_truth": "true", "domain": "science"},
+  {"claim_id": "hc-008", "claim": "El cambio climático es una conspiración inventada.", "language": "es", "ground_truth": "false", "domain": "science"},
+  {"claim_id": "hc-009", "claim": "The moon landing in 1969 was faked.", "language": "en", "ground_truth": "false", "domain": "history"},
+  {"claim_id": "hc-010", "claim": "Los humanos solo usan el 10% de su cerebro.", "language": "es", "ground_truth": "false", "domain": "science"}
+]

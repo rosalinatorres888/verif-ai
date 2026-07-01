@@ -1,0 +1,43 @@
+# VerifAI 2.0 — Training Configuration
+# All hyperparameters in one place. Edit here, not in code.
+
+# ── Model architecture ────────────────────────────────────────────
+model:
+  vocab_size: 16000         # must match tokenizer vocab size
+  embed_dim: 256            # token + positional + language embedding dim
+  num_heads: 8              # attention heads (embed_dim must be divisible by num_heads)
+  num_layers: 4             # transformer encoder blocks
+  hidden_dim: 512           # feed-forward inner dimension
+  max_length: 256           # max token sequence length
+  dropout: 0.1              # dropout rate
+  num_labels: 4             # true / false / misleading / unverifiable
+
+# ── Label mapping ─────────────────────────────────────────────────
+labels:
+  true: 0
+  false: 1
+  misleading: 2
+  unverifiable: 3
+
+# ── Training ──────────────────────────────────────────────────────
+training:
+  batch_size: 32
+  learning_rate: 1.0e-4
+  warmup_steps: 500
+  num_epochs: 10
+  weight_decay: 0.01
+  seed: 42
+  gradient_clip: 1.0
+  eval_every_n_epochs: 1    # evaluate on val set every N epochs
+
+# ── Paths ─────────────────────────────────────────────────────────
+paths:
+  vocab: "models/verifai-classifier/vocab.json"
+  checkpoint_dir: "models/verifai-classifier"
+  train: "data/train.csv"
+  val: "data/val.csv"
+  test: "data/test.csv"
+  training_log: "outputs/training_log.json"
+  training_curves: "outputs/training_curves.png"
+  classifier_results: "outputs/classifier_results.json"
+  confusion_matrix: "outputs/confusion_matrix.png"
