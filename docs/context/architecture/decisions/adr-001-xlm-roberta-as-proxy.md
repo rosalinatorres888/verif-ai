@@ -1,6 +1,12 @@
 # ADR-001: XLM-RoBERTa Sentiment Model as Fake/Real Proxy Signal
 
-Status: Accepted | Date: 2026-05-30
+Status: **Superseded by [ADR-003](adr-003-verifai-classifier-replaces-xlm-roberta.md)** | Date: 2026-05-30
+
+> **Note (Block G):** This decision was replaced once the from-scratch VerifAIClassifier
+> reached a usable checkpoint. The XLM-RoBERTa sentiment proxy described below is no
+> longer used in `app/pipeline/verdict.py`. This ADR is kept for historical context —
+> the alternatives-considered reasoning below still explains why a proxy signal was
+> needed in the first place.
 
 ## Context
 
