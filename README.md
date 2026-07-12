@@ -1,11 +1,19 @@
-# VerifAI — Bilingual Fact Checker
+<h1 align="center">VerifAI</h1>
+<h3 align="center">A Bilingual Retrieval-Augmented Misinformation Detection System</h3>
 
-A bilingual (English/Spanish) retrieval-augmented misinformation detection system.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue.svg?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/PyTorch-Custom_Transformer-ee4c2c.svg?style=for-the-badge&logo=pytorch&logoColor=white" alt="PyTorch">
+  <img src="https://img.shields.io/badge/FastAPI-Backend-009688.svg?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/Streamlit-UI-FF4B4B.svg?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit">
+  <img src="https://img.shields.io/badge/Status-Active_Research-success.svg?style=for-the-badge" alt="Status">
+</p>
 
-**Course:** IE7374 — Generative AI · Northeastern University  
-**Author:** Rosalina Torres · Solo Project · Summer 2026
+<p align="center">
+  <em>Investigating how bilingual fact-checking systems can remain transparent and evidence-grounded under limited Spanish-language training data.</em>
+</p>
+<hr>
 
----
 
 ## Quick Start
 
