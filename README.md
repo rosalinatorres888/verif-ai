@@ -65,6 +65,25 @@ Three layers, each one I can test and break independently:
 Frontend: Streamlit UI at localhost:8502
 Backend: FastAPI at localhost:8000
 
+## 🖥️ Live Prototype Demonstration
+
+The three-layer pipeline (Intake → Retrieval + Reranker → Verdict) operates via a
+FastAPI backend and a Streamlit frontend, providing side-by-side RAG vs. no-RAG
+ablation comparisons. Both screenshots below are live runs with Claude active
+(`generation_mode: claude`), captured the same day — not staged.
+
+| English Claim | Spanish Claim |
+| :---: | :---: |
+| <img src="docs/assets/pyramid_en_ablation.png" width="400"/> | <img src="docs/assets/pyramid_es_ablation.png" width="400"/> |
+| *With evidence: **True** (85%). Without evidence: **Unverifiable** (45%). Same underlying classifier signal (false, ~62–64%) — Claude's reasoning over retrieved evidence is what changes the final verdict.* | *With evidence: **Misleading** (75%) — evidence showed the "new" pyramid was found inside the already-known Kukulkán pyramid, not as an independent structure. Without evidence: **Unverifiable** (45%).* |
+
+**Note on consistency:** these results won't match the English/Spanish comparison
+in [Results](#the-same-claim-two-languages-a-15-point-gap) below — that section
+documents an earlier run under classifier-fallback mode (Claude unavailable).
+Retrieval here calls a live web search, so the exact evidence returned — and
+therefore Claude's verdict — can vary between runs on the identical claim. That
+variability is itself documented in [Limitations](#limitations).
+
 ## Model
 
 I trained **VerifAIClassifier** (`model/architecture.py`) from scratch in
