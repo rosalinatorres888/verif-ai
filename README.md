@@ -1,31 +1,34 @@
-# VerifAI — Bilingual Fact Checker
+<h1 align="center">VerifAI — Bilingual Fact Checker</h1>
 
-![Python](https://img.shields.io/badge/python-3.13-3776AB?logo=python&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-2.3%2B-EE4C2C?logo=pytorch&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.111%2B-009688?logo=fastapi&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.35%2B-FF4B4B?logo=streamlit&logoColor=white)
-![Bilingual](https://img.shields.io/badge/bilingual-EN%20%2F%20ES-6f42c1)
-![Status](https://img.shields.io/badge/status-research%20prototype-yellow)
-![Course](https://img.shields.io/badge/IE7374-Northeastern%20University-c8102e)
+<p align="center">
+  <img src="https://img.shields.io/badge/python-3.13-3776AB?logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/PyTorch-2.3%2B-EE4C2C?logo=pytorch&logoColor=white" alt="PyTorch">
+  <img src="https://img.shields.io/badge/FastAPI-0.111%2B-009688?logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/Streamlit-1.35%2B-FF4B4B?logo=streamlit&logoColor=white" alt="Streamlit">
+  <br>
+  <img src="https://img.shields.io/badge/bilingual-EN%20%2F%20ES-6f42c1" alt="Bilingual">
+  <img src="https://img.shields.io/badge/status-research%20prototype-yellow" alt="Status">
+  <img src="https://img.shields.io/badge/IE7374-Northeastern%20University-c8102e" alt="Course">
+</p>
 
-**Domain:** Natural Language Processing (NLP). This project addresses automated
-bilingual fact-checking — a high-impact NLP task at the intersection of language
-understanding, information retrieval, and generative text synthesis. The
-English/Spanish focus reflects a documented equity gap: Spanish-speaking
-communities face comparable or higher misinformation exposure
-([Abrajano et al., 2024](https://academic.oup.com/pnasnexus/article/3/11/pgae442/7900260))
-but have access to significantly fewer automated verification tools
-([Quelle et al., 2025](https://link.springer.com/article/10.1140/epjds/s13688-025-00520-6)).
+<p align="center">
+  <em>Investigating how bilingual fact-checking systems can remain transparent and evidence-grounded under limited Spanish-language training data.</em><br>
+  <b>Author:</b> Rosalina Torres | IE7374 — Generative AI | Summer 2026
+</p>
 
-The decision to train from scratch — rather than fine-tune a pretrained model —
-was made deliberately for two reasons: (1) to achieve full engineering ownership
-of the model architecture and training process as a learning objective; and (2)
-to establish an honest from-scratch baseline for the bilingual misinformation
-detection task, against which pretrained approaches can be compared in future
-work.
+<hr>
 
-**Course:** IE7374 — Generative AI · Northeastern University
-**Author:** Rosalina Torres · Solo Project · Summer 2026
+**Misinformation crosses languages. Most automated verification tools don't.**
+
+VerifAI is an attempt to close a small part of that gap. It is a bilingual, retrieval-augmented fact-checking prototype that accepts a claim in English or Spanish, retrieves relevant evidence, and returns a grounded verdict in the input language. 
+
+This project addresses a high-impact task at the intersection of language understanding, information retrieval, and generative text synthesis. The English/Spanish focus reflects a documented equity gap: Spanish-speaking communities face comparable or higher misinformation exposure ([Abrajano et al., 2024](https://academic.oup.com/pnasnexus/article/3/11/pgae442/7900260)) but have access to significantly fewer automated verification tools ([Quelle et al., 2025](https://link.springer.com/article/10.1140/epjds/s13688-025-00520-6)).
+
+The primary classifier and tokenizer were built and trained entirely from scratch—rather than fine-tuning a pretrained model—for two reasons: 
+1. To achieve full engineering ownership of the model architecture and training loop.
+2. To establish an honest, transparent baseline for the bilingual misinformation detection task, highlighting how data scarcity manifests before introducing the complexities of pretrained weights.
+
+The result is a working system, a verifiable baseline, and a revealing example of how language imbalance shows up in machine learning.
 
 ---
 
