@@ -8,11 +8,21 @@
 ![Status](https://img.shields.io/badge/status-research%20prototype-yellow)
 ![Course](https://img.shields.io/badge/IE7374-Northeastern%20University-c8102e)
 
-Most fact-checking systems treat English as the default and Spanish as
-an afterthought. I built VerifAI to test what happens when you don't
-do that — a retrieval-augmented misinformation classifier that runs
-the same pipeline in both languages, then reports honestly on where
-that assumption breaks.
+**Domain:** Natural Language Processing (NLP). This project addresses automated
+bilingual fact-checking — a high-impact NLP task at the intersection of language
+understanding, information retrieval, and generative text synthesis. The
+English/Spanish focus reflects a documented equity gap: Spanish-speaking
+communities face comparable or higher misinformation exposure
+([Abrajano et al., 2024](https://academic.oup.com/pnasnexus/article/3/11/pgae442/7900260))
+but have access to significantly fewer automated verification tools
+([Quelle et al., 2025](https://link.springer.com/article/10.1140/epjds/s13688-025-00520-6)).
+
+The decision to train from scratch — rather than fine-tune a pretrained model —
+was made deliberately for two reasons: (1) to achieve full engineering ownership
+of the model architecture and training process as a learning objective; and (2)
+to establish an honest from-scratch baseline for the bilingual misinformation
+detection task, against which pretrained approaches can be compared in future
+work.
 
 **Course:** IE7374 — Generative AI · Northeastern University
 **Author:** Rosalina Torres · Solo Project · Summer 2026
@@ -212,8 +222,3 @@ Three pieces of the process worth showing, not just the polished result:
 - `docs/context/architecture/system-design.md` — full pipeline architecture
 - `docs/context/architecture/decisions/` — ADRs (design decisions and why)
 - `docs/context/project-overview.md` — quick orientation for contributors
-
-## PRD
-
-Full build spec (personal planning doc, not required to reproduce this repo):
-`~/Documents/mission-control/PRD-VerifAI.md`

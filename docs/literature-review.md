@@ -32,8 +32,9 @@ Reimers and Gurevych (2020) address a specific failure mode: multilingual transf
 This is the literature most directly relevant to the project's motivating claim and RQ3.
 
 - **X-FACT** (Gupta & Srikumar, 2021) benchmarks fact verification across 25 languages and reports the best model reaching only ~40% F-score — establishing empirically that multilingual fact verification is substantially harder than the English-only setting, not just under-resourced. This is the strongest evidence that VerifAI's EN/ES F1 gap (RQ3) is measuring a real, literature-documented phenomenon rather than an artifact of this project's specific implementation.
-- **FacTeR-Check** (Martín et al., 2022) is one of the few systems built and validated specifically on Spanish-language misinformation (COVID-19 claims from Spanish social media). Its comparative scarcity in the literature — most fact-checking systems papers evaluate English or treat other languages as an afterthought — is itself informal evidence for the tooling gap this project's Section 1 rationale claims.
-- **Beyond Translation** (Chung, Cobo, & Serna, 2025) tackles this gap directly, introducing MultiSynFact (2.2M synthetic claim-source pairs for Spanish, German, and English) specifically because real-world Spanish fact-checking training data is scarce. VerifAI's own synthetic ES corpus (475 Claude-generated, author-verified examples) is a smaller-scale, manually quality-controlled instance of the same underlying strategy: when labeled Spanish data doesn't exist at sufficient volume, generate and verify it rather than train on English data alone.
+- **FacTeR-Check** (Martín et al., 2022) is one of the few systems built and validated specifically on Spanish-language misinformation (COVID-19 claims from Spanish social media). Its comparative scarcity in the literature is not just an impression — **Quelle et al. (2025)** quantify it directly, analyzing 264,487 global fact-checks and finding English accounts for 33.1% versus only 8.78% for Spanish, despite English speakers being a minority of global internet users. That coverage gap is the empirical basis for this project's Section 1 equity-gap claim, not an assumption.
+- **Abrajano et al. (2024)**, published in *PNAS Nexus*, provide the exposure-side complement to Quelle et al.'s coverage-gap finding: the first study to empirically demonstrate that Latinos who rely on Spanish-language social media for news are significantly more likely to hold false political beliefs than those consuming English-language content. Together, these two papers substantiate both halves of this project's motivating claim — comparable-or-higher misinformation exposure (Abrajano et al.) met with significantly fewer verification tools (Quelle et al.).
+- **Beyond Translation** (Chung, Cobo, & Serna, 2025) tackles this gap directly, introducing MultiSynFact (2.2M synthetic claim-source pairs for Spanish, German, English, and other low-resource languages) specifically because real-world Spanish fact-checking training data is scarce. VerifAI's own synthetic ES corpus (475 Claude-generated, author-verified examples) is a smaller-scale, manually quality-controlled instance of the same underlying strategy: when labeled Spanish data doesn't exist at sufficient volume, generate and verify it rather than train on English data alone.
 
 ## How This Project Positions Itself
 
@@ -42,6 +43,8 @@ VerifAI does not introduce a new fact-checking paradigm — RAG-based verificati
 ---
 
 ## References
+
+Abrajano, M., Nagler, J., Garcia, M., Pope, A., Vidigal, R., & Tucker, J. A. (2024). How reliance on Spanish-language social media predicts beliefs in false political narratives amongst Latinos. *PNAS Nexus, 3*(11), pgae442. https://academic.oup.com/pnasnexus/article/3/11/pgae442/7900260
 
 Augenstein, I., Lioma, C., Wang, D., Lima, L. C., Hansen, C., Hansen, C., & Simonsen, J. G. (2019). MultiFC: A Real-World Multi-Domain Dataset for Evidence-Based Fact Checking of Claims. *Proceedings of EMNLP-IJCNLP 2019.* https://aclanthology.org/D19-1475/
 
@@ -56,6 +59,8 @@ Gupta, A., & Srikumar, V. (2021). X-FACT: A New Benchmark Dataset for Multilingu
 Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N., Küttler, H., Lewis, M., Yih, W., Rocktäschel, T., Riedel, S., & Kiela, D. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. *Advances in Neural Information Processing Systems 33 (NeurIPS 2020).*
 
 Martín, A., Huertas-Tato, J., Huertas-García, Á., Villar-Rodríguez, G., & Camacho, D. (2022). FacTeR-Check: Semi-automated fact-checking through semantic similarity and natural language inference. arXiv:2110.14532. https://arxiv.org/abs/2110.14532
+
+Quelle, D., Cheng, C. Y., Bovet, A., & Hale, S. A. (2025). Lost in translation: using global fact-checks to measure multilingual misinformation prevalence, spread, and evolution. *EPJ Data Science, 14*. https://link.springer.com/article/10.1140/epjds/s13688-025-00520-6 (preprint: arXiv:2310.18089)
 
 Reimers, N., & Gurevych, I. (2020). Making Monolingual Sentence Embeddings Multilingual using Knowledge Distillation. *Proceedings of EMNLP 2020.* arXiv:2004.09813.
 
