@@ -213,7 +213,3 @@ Three pieces of the process worth showing, not just the polished result:
 - `docs/context/architecture/decisions/` — ADRs (design decisions and why)
 - `docs/context/project-overview.md` — quick orientation for contributors
 
-## PRD
-
-Full build spec (personal planning doc, not required to reproduce this repo):
-`~/Documents/mission-control/PRD-VerifAI.md`
