@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <em>Investigating how bilingual fact-checking systems can remain transparent and evidence-grounded under limited Spanish-language training data.</em><br>
+  <em>.</em><br>
   <b>Author:</b> Rosalina Torres | IE7374 — Generative AI | Summer 2026
 </p>
 
@@ -20,7 +20,7 @@
 
 **Misinformation crosses languages. Most automated verification tools don't.**
 
-VerifAI is an attempt to close a small part of that gap. It is a bilingual, retrieval-augmented fact-checking prototype that accepts a claim in English or Spanish, retrieves relevant evidence, and returns a grounded verdict in the input language. 
+VerifAI is a bilingual (English/Spanish), misinformation detection and retrieval-augmented fact-checking prototype that accepts a claim in English or Spanish, retrieves relevant evidence, and returns a grounded verdict in the input language. 
 
 This project addresses a high-impact task at the intersection of language understanding, information retrieval, and generative text synthesis. The English/Spanish focus reflects a documented equity gap: Spanish-speaking communities face comparable or higher misinformation exposure ([Abrajano et al., 2024](https://academic.oup.com/pnasnexus/article/3/11/pgae442/7900260)) but have access to significantly fewer automated verification tools ([Quelle et al., 2025](https://link.springer.com/article/10.1140/epjds/s13688-025-00520-6)).
 
