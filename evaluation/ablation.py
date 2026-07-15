@@ -1,12 +1,19 @@
 """
 evaluation/ablation.py
-Runs 4-condition ablation study on the sample_claims set.
+Runs a 4-condition ablation study on the curated demo claim set.
 
 Conditions:
-  A) Full pipeline     (RAG + XLM-RoBERTa)
-  B) No RAG            (LLM only, no retrieval)
-  C) No classifier     (RAG only, skip XLM-RoBERTa)
-  D) Baseline          (no RAG, no classifier)
+  A) full_pipeline   RAG retrieval + VerifAIClassifier signal + Claude
+  B) no_rag          VerifAIClassifier signal + Claude, no retrieval
+  C) no_classifier   RAG retrieval + Claude, classifier signal neutralized
+  D) baseline        Claude only — no retrieval, classifier neutralized
+
+"Neutralized" means the classifier is not run and Claude's prompt receives
+a neutral placeholder signal ("unverifiable", confidence 0.0) instead of a
+real prediction — generate_verdict() always includes a classifier field in
+its prompt, so a truly absent signal isn't representable without changing
+the prompt template itself. This is disclosed wherever these results are
+reported.
 
 Usage:
     python evaluation/ablation.py
@@ -17,37 +24,69 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from sklearn.metrics import f1_score
 from app.pipeline.intake import extract_claim
 from app.pipeline.retrieval import retrieve_evidence
-from app.pipeline.verdict import generate_verdict, run_classifier
+import app.pipeline.verdict as verdict_module
+from app.pipeline.verdict import generate_verdict
+
+LABELS = ["true", "false", "misleading", "unverifiable"]
+
+_real_run_classifier = verdict_module.run_classifier
+
+
+def _neutral_classifier(text: str, language: str = "en"):
+    """Stand-in for run_classifier in no-classifier conditions: gives Claude
+    a neutral signal instead of a real prediction."""
+    return "unverifiable", 0.0
 
 
 def run_condition(claims, use_rag: bool, use_classifier: bool, label: str):
-    y_true, y_pred, latencies = [], [], []
-    for item in claims:
-        start = time.perf_counter()
-        try:
-            intake = extract_claim(item["claim"])
-            evidence = retrieve_evidence(intake["extracted_assertion"], intake["language"]) if use_rag else []
-            if not use_classifier:
-                # Monkey-patch: pass dummy classifier values
-                result = generate_verdict(intake["extracted_assertion"], evidence, intake["language"])
-                # Override classifier fields
-                result["classifier_label"] = "skipped"
-                result["classifier_confidence"] = 0.0
-            else:
-                result = generate_verdict(intake["extracted_assertion"], evidence, intake["language"])
-            predicted = result["label"]
-        except Exception as e:
-            print(f"  [{label}] ERROR: {e}")
-            predicted = "unverifiable"
-        elapsed = time.perf_counter() - start
-        y_true.append(item.get("ground_truth", "unverifiable"))
-        y_pred.append(predicted)
-        latencies.append(elapsed)
+    # Swap the classifier out at the module level so generate_verdict()
+    # (which calls run_classifier internally) really runs without it.
+    verdict_module.run_classifier = (
+        _real_run_classifier if use_classifier else _neutral_classifier
+    )
 
-    labels = ["true", "false", "misleading", "unverifiable"]
-    f1 = f1_score(y_true, y_pred, labels=labels, average="macro", zero_division=0)
+    y_true, y_pred, latencies, modes = [], [], [], []
+    try:
+        for item in claims:
+            start = time.perf_counter()
+            try:
+                intake = extract_claim(item["claim"])
+                evidence = (
+                    retrieve_evidence(intake["extracted_assertion"], intake["language"])
+                    if use_rag else []
+                )
+                result = generate_verdict(
+                    extracted_assertion=intake["extracted_assertion"],
+                    evidence=evidence,
+                    language=intake["language"],
+                )
+                predicted = result["label"]
+                modes.append(result.get("generation_mode", "unknown"))
+            except Exception as e:
+                print(f"  [{label}] ERROR on {item.get('claim_id', '?')}: {e}")
+                predicted = "unverifiable"
+                modes.append("error")
+            elapsed = time.perf_counter() - start
+            y_true.append(item.get("ground_truth", "unverifiable"))
+            y_pred.append(predicted)
+            latencies.append(elapsed)
+    finally:
+        verdict_module.run_classifier = _real_run_classifier
+
+    f1 = f1_score(y_true, y_pred, labels=LABELS, average="macro", zero_division=0)
+    accuracy = sum(t == p for t, p in zip(y_true, y_pred)) / len(y_true)
     p50 = sorted(latencies)[len(latencies) // 2] if latencies else 0
-    return {"condition": label, "f1_macro": round(f1, 4), "latency_p50_sec": round(p50, 2)}
+    return {
+        "condition": label,
+        "f1_macro": round(f1, 4),
+        "accuracy": round(accuracy, 4),
+        "latency_p50_sec": round(p50, 2),
+        "generation_modes": {m: modes.count(m) for m in set(modes)},
+        "predictions": [
+            {"claim_id": c.get("claim_id"), "ground_truth": t, "predicted": p}
+            for c, t, p in zip(claims, y_true, y_pred)
+        ],
+    }
 
 
 def run_ablation():
@@ -55,7 +94,7 @@ def run_ablation():
     with open(sample_path) as f:
         claims = json.load(f)
 
-    print("Running ablation study (4 conditions)...")
+    print(f"Running ablation study (4 conditions x {len(claims)} claims)...")
     results = []
     conditions = [
         (True,  True,  "full_pipeline"),
@@ -67,19 +106,29 @@ def run_ablation():
         print(f"  Running: {label}")
         r = run_condition(claims, use_rag, use_clf, label)
         results.append(r)
-        print(f"    F1={r['f1_macro']}  p50={r['latency_p50_sec']}s")
+        print(f"    F1={r['f1_macro']}  acc={r['accuracy']}  p50={r['latency_p50_sec']}s  modes={r['generation_modes']}")
 
-    out_path = os.path.join(os.path.dirname(__file__), "../outputs/ablation_report.md")
-    with open(out_path, "w") as f:
+    # Markdown summary table
+    out_md = os.path.join(os.path.dirname(__file__), "../outputs/ablation_report.md")
+    flags = [(True, True), (False, True), (True, False), (False, False)]
+    with open(out_md, "w") as f:
         f.write("# VerifAI Ablation Study\n\n")
-        f.write("| Condition | RAG | Classifier | F1 Macro | Latency p50 |\n")
-        f.write("|-----------|-----|------------|----------|-------------|\n")
-        flags = [(True, True), (False, True), (True, False), (False, False)]
+        f.write(f"n = {len(claims)} demo claims (5 EN / 5 ES, ground-truth labeled). "
+                "Generated by evaluation/ablation.py — see that file's docstring "
+                "for what \"no classifier\" means precisely.\n\n")
+        f.write("| Condition | RAG | Classifier | F1 Macro | Accuracy | Latency p50 |\n")
+        f.write("|-----------|-----|------------|----------|----------|-------------|\n")
         for r, (rag, clf) in zip(results, flags):
             f.write(f"| {r['condition']} | {'✓' if rag else '✗'} | {'✓' if clf else '✗'} "
-                    f"| {r['f1_macro']} | {r['latency_p50_sec']}s |\n")
+                    f"| {r['f1_macro']} | {r['accuracy']:.0%} | {r['latency_p50_sec']}s |\n")
 
-    print(f"\nAblation complete. Report saved to outputs/ablation_report.md")
+    # Full JSON (per-prediction detail for the technical report)
+    out_json = os.path.join(os.path.dirname(__file__), "../outputs/ablation_results.json")
+    with open(out_json, "w") as f:
+        json.dump({"n_claims": len(claims), "conditions": results}, f, indent=2)
+
+    print(f"\nAblation complete. Report: outputs/ablation_report.md · "
+          f"Full results: outputs/ablation_results.json")
 
 
 if __name__ == "__main__":
