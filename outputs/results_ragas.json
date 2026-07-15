@@ -1,0 +1,59 @@
+{
+  "n_evaluated": 10,
+  "judge_model": "claude-sonnet-4-5",
+  "embedding_model": "paraphrase-multilingual-MiniLM-L12-v2",
+  "faithfulness": 0.779,
+  "answer_relevancy": 0.8659,
+  "per_sample": [
+    {
+      "claim": "Las vacunas causan autismo.",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9719
+    },
+    {
+      "claim": "The Eiffel Tower is the tallest structure in Europe.",
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.9152
+    },
+    {
+      "claim": "Drinking bleach cures COVID-19.",
+      "faithfulness": 0.3333,
+      "answer_relevancy": 0.9863
+    },
+    {
+      "claim": "El sol sale por el este.",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7905
+    },
+    {
+      "claim": "5G towers spread the coronavirus.",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9406
+    },
+    {
+      "claim": "La tierra es plana.",
+      "faithfulness": 0.8571,
+      "answer_relevancy": 0.5941
+    },
+    {
+      "claim": "Water boils at 100 degrees Celsius at sea level.",
+      "faithfulness": 0.75,
+      "answer_relevancy": 0.8282
+    },
+    {
+      "claim": "El cambio clim\u00e1tico es una conspiraci\u00f3n inventada.",
+      "faithfulness": 0.75,
+      "answer_relevancy": 0.8938
+    },
+    {
+      "claim": "The moon landing in 1969 was faked.",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9185
+    },
+    {
+      "claim": "Los humanos solo usan el 10% de su cerebro.",
+      "faithfulness": 0.6,
+      "answer_relevancy": 0.8202
+    }
+  ]
+}
