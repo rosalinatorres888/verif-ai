@@ -144,37 +144,6 @@ python evaluation/ragas_eval.py       # RAGAS retrieval quality
 python evaluation/ablation.py         # 4-condition ablation study
 ```
 
-## Model Pipeline — single-command demo
-
-The full pipeline (data loading → retrieval → classifier + Claude verdict
-generation) runs end-to-end with one command:
-
-```bash
-python src/model_runner.py
-```
-
-This loads 10 curated demo claims (5 English, 5 Spanish, with ground-truth
-labels) from `data/sample_claims.json`, runs each through the same code path
-the FastAPI backend uses, and writes human-readable results to
-`outputs/samples.txt`. Configuration lives in `configs/model_config.yaml`;
-shared helpers in `utils/helpers.py`. The run calls live services (Tavily
-retrieval, Anthropic generation), takes roughly 1–2 minutes, and degrades
-gracefully to classifier-fallback mode if no `ANTHROPIC_API_KEY` is set.
-
-**Preliminary results** (run of 2026-07-13, all samples in `claude` mode):
-the full pipeline got **9/10** claims right — the one miss returned an honest
-*unverifiable* rather than a wrong label. The classifier alone got **4/10**
-on the same claims; most strikingly, it labeled three famous myths *true*
-(bleach cures COVID, faked moon landing, humans use 10% of their brains),
-and evidence retrieval corrected all three. n=10 is a demonstration, not a
-statistical result — but it previews the ablation question the final report
-will answer properly. Full samples and analysis: [`outputs/samples.txt`](outputs/samples.txt)
-and [`outputs/README.md`](outputs/README.md).
-
-A `Dockerfile` is included for containerized runs (`docker build -t verifai .`
-then `docker run --env-file .env verifai`). `start.sh` launches the backend
-and UI together for local development.
-
 ## Results
 
 ### The same claim, two languages, a 15-point gap
@@ -252,9 +221,33 @@ pipeline template: `src/data_loader.py` (loads the demo set),
 `utils/helpers.py` (config loading, output formatting) — thin wrappers
 around the existing `app/pipeline/` modules, not a second implementation.
 
+**The pretrained generative model in this pipeline is Claude
+(`claude-sonnet-4-5`)**, invoked via the Anthropic API for verdict synthesis
+over retrieved evidence; the pipeline also loads the pretrained
+`paraphrase-multilingual-MiniLM-L12-v2` sentence-embedding model locally for
+cross-lingual retrieval. The from-scratch VerifAIClassifier is an
+*additional* component alongside these, not a substitute for them. If no
+`ANTHROPIC_API_KEY` is available, the run degrades gracefully to
+classifier-fallback mode instead of failing.
+
+A `Dockerfile` is included for containerized runs (`docker build -t verifai .`
+then `docker run --env-file .env verifai`). `start.sh` launches the backend
+and UI together for local development.
+
 ### What the samples show
 
-Two results worth calling out from an actual run:
+**Overall** (run of 2026-07-13, all samples in `claude` mode): the full
+pipeline got **9/10** claims right — the one miss returned an honest
+*unverifiable* rather than a wrong label. The classifier alone got **4/10**
+on the same claims; most strikingly, it labeled three famous myths *true*
+(bleach cures COVID, faked moon landing, humans use 10% of their brains),
+and evidence retrieval corrected all three. n=10 is a demonstration, not a
+statistical result — but it previews the ablation question the final report
+answers properly. Full samples and per-sample analysis:
+[`outputs/samples.txt`](outputs/samples.txt) and
+[`outputs/README.md`](outputs/README.md).
+
+Two individual results worth calling out:
 
 - **"Drinking bleach cures COVID-19"** — the raw classifier said **true**
   (72%). Claude, reasoning over retrieved WHO/health-authority evidence,

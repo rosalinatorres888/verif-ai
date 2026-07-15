@@ -1,9 +1,10 @@
 # VerifAI — Model Pipeline Configuration (Milestone 4)
 #
-# Mirrors the actual config stored inside the trained checkpoint
-# (models/verifai-classifier/best_model.pt), so this file documents what's
-# really running rather than restating training/config.yaml's intended
-# values. See training/config.yaml for the training-time hyperparameters.
+# Mirrors the architecture config stored inside the trained checkpoint
+# (models/verifai-classifier/best_model.pt) — with one deliberate override:
+# the checkpoint records the training-time dropout (0.1); inference runs
+# with dropout 0.0, and that inference value is what's listed here. See
+# training/config.yaml for the full training-time hyperparameters.
 
 model:
   vocab_size: 16000
@@ -13,8 +14,8 @@ model:
   hidden_dim: 512
   max_length: 256
   num_labels: 4
-  dropout: 0.0          # inference mode — dropout disabled
-  labels: [true, false, misleading, unverifiable]
+  dropout: 0.0          # inference mode — checkpoint stores 0.1 (training)
+  labels: ["true", "false", "misleading", "unverifiable"]
 
 paths:
   checkpoint: "models/verifai-classifier/best_model.pt"
