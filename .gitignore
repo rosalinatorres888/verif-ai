@@ -10,3 +10,5 @@ __pycache__/
 *.pt
 !models/verifai-classifier/best_model.pt
 ~$*
+.agents/
+.claude/

@@ -1,0 +1,121 @@
+VerifAI — Model Pipeline Sample Outputs
+Generated: 2026-07-13 23:33:13
+============================================================
+
+[1] hc-001 (Spanish, domain=health)
+Claim:        Las vacunas causan autismo.
+Ground truth: false
+Verdict:      false (95% confidence)
+Classifier:   unverifiable (55%)
+Generation:   claude
+Evidence:     5 source(s)
+Explanation:
+  La afirmación de que las vacunas causan autismo es falsa según múltiples estudios científicos y verificaciones. El mito se originó en un estudio fraudulento publicado en 1998 por Andrew Wakefield, que fue posteriormente retractado por la revista The Lancet en 2010 por considerarse totalmente falso. Investigaciones posteriores con más de 140,000 niños no han encontrado ninguna relación entre las vacunas y el autismo. Los especialistas y organismos científicos han demostrado repetidamente que no existe evidencia alguna de conexión entre la vacunación y el trastorno del espectro autista.
+
+------------------------------------------------------------
+
+[2] hc-002 (English, domain=geography)
+Claim:        The Eiffel Tower is the tallest structure in Europe.
+Ground truth: false
+Verdict:      false (85% confidence)
+Classifier:   false (68%)
+Generation:   claude
+Evidence:     4 source(s)
+Explanation:
+  The claim that the Eiffel Tower is the tallest structure in Europe is false. According to the evidence, the Eiffel Tower stands at 330 meters (1,083 feet) including its TV antenna and is the tallest structure in Paris. However, the evidence clearly states that it was only the tallest structure in the world until 1929 when the Chrysler Building in New York surpassed it. While the Eiffel Tower is tall, the evidence does not support that it is currently the tallest structure in Europe, and the title of '6 Famous Buildings Taller Than the Eiffel Tower' directly contradicts the claim.
+
+------------------------------------------------------------
+
+[3] hc-003 (English, domain=health)
+Claim:        Drinking bleach cures COVID-19.
+Ground truth: false
+Verdict:      false (98% confidence)
+Classifier:   true (72%)
+Generation:   claude
+Evidence:     5 source(s)
+Explanation:
+  The claim that drinking bleach cures COVID-19 is definitively false and extremely dangerous. Multiple authoritative sources, including the World Health Organization, explicitly state that drinking bleach, methanol, or ethanol does not prevent or cure COVID-19. These substances are poisons that can cause severe disability, organ damage, and death. While disinfectants may kill viruses on surfaces, they will not kill the virus inside the human body and should never be ingested.
+
+------------------------------------------------------------
+
+[4] hc-004 (Spanish, domain=science)
+Claim:        El sol sale por el este.
+Ground truth: true
+Verdict:      unverifiable (85% confidence)
+Classifier:   false (60%)
+Generation:   claude
+Evidence:     1 source(s)
+Explanation:
+  La afirmación sostiene que el sol sale por el este, lo cual es un hecho astronómico básico y verificable. Sin embargo, la evidencia proporcionada no contiene información relevante sobre la dirección en la que sale el sol. El fragmento citado de BBC News Mundo habla sobre diversas influencias del sol en nuestras vidas y menciona arco iris, pero no aborda el tema de los puntos cardinales ni la salida del sol. Aunque la afirmación es verdadera según el conocimiento general, no puede verificarse con la evidencia específica proporcionada.
+
+------------------------------------------------------------
+
+[5] hc-005 (English, domain=health)
+Claim:        5G towers spread the coronavirus.
+Ground truth: false
+Verdict:      false (95% confidence)
+Classifier:   false (65%)
+Generation:   claude
+Evidence:     5 source(s)
+Explanation:
+  There is no scientific evidence linking 5G technology to the spread of coronavirus. Multiple authoritative sources, including the World Health Organization and independent fact-checking organizations, have rejected this conspiracy theory. Viruses cannot travel on radio waves or mobile networks, and coronavirus has spread widely in countries without 5G infrastructure. The claim has been thoroughly debunked by fact-checkers in at least 14 countries worldwide.
+
+------------------------------------------------------------
+
+[6] hc-006 (Spanish, domain=science)
+Claim:        La tierra es plana.
+Ground truth: false
+Verdict:      false (92% confidence)
+Classifier:   unverifiable (67%)
+Generation:   claude
+Evidence:     1 source(s)
+Explanation:
+  La afirmación de que la Tierra es plana contradice evidencia científica observable y verificable. Según la fuente proporcionada, la curvatura de la Tierra comienza a notarse a partir de los 10 km de altitud y se hace más evidente a los 15 km. Además, los aviones pueden viajar en línea relativamente recta y dar la vuelta al mundo sin encontrar ningún borde, lo cual es consistente con un planeta esférico, no plano. Estos hechos observables demuestran que la Tierra tiene forma esférica.
+
+------------------------------------------------------------
+
+[7] hc-007 (English, domain=science)
+Claim:        Water boils at 100 degrees Celsius at sea level.
+Ground truth: true
+Verdict:      true (95% confidence)
+Classifier:   true (66%)
+Generation:   claude
+Evidence:     5 source(s)
+Explanation:
+  The claim that water boils at 100 degrees Celsius at sea level is well-supported by multiple sources. All provided evidence consistently confirms this temperature as the boiling point under standard atmospheric pressure at sea level. While the evidence also notes that boiling point varies with altitude and pressure, this does not contradict the claim but rather provides additional context. The claim is accurate and specific to sea level conditions.
+
+------------------------------------------------------------
+
+[8] hc-008 (Spanish, domain=science)
+Claim:        El cambio climático es una conspiración inventada.
+Ground truth: false
+Verdict:      false (85% confidence)
+Classifier:   false (77%)
+Generation:   claude
+Evidence:     1 source(s)
+Explanation:
+  La afirmación de que el cambio climático es una conspiración inventada es falsa. Existe un consenso científico sólido sobre la realidad del cambio climático y su relación con el calentamiento global, respaldado por evidencia científica robusta. Las teorías conspirativas que intentan negar el cambio climático carecen de fundamento y frecuentemente manipulan información para cuestionar hechos científicamente comprobados. La evidencia verificada demuestra que estas narrativas conspirativas son parte de campañas de desinformación.
+
+------------------------------------------------------------
+
+[9] hc-009 (English, domain=history)
+Claim:        The moon landing in 1969 was faked.
+Ground truth: false
+Verdict:      false (95% confidence)
+Classifier:   true (70%)
+Generation:   claude
+Evidence:     5 source(s)
+Explanation:
+  The claim that the 1969 moon landing was faked is a well-known conspiracy theory that has been thoroughly debunked. The evidence provided discusses the existence and prevalence of moon landing conspiracy theories but does not provide credible support for the claim itself. In fact, the evidence includes technical explanations showing why faking the landing would have been impossible with 1969 technology, such as the primitive state of film and video recording that could not simulate lunar conditions. The moon landing conspiracy theory persists in popular culture despite overwhelming scientific evidence and documentation proving the Apollo 11 mission successfully landed humans on the moon.
+
+------------------------------------------------------------
+
+[10] hc-010 (Spanish, domain=science)
+Claim:        Los humanos solo usan el 10% de su cerebro.
+Ground truth: false
+Verdict:      false (95% confidence)
+Classifier:   true (51%)
+Generation:   claude
+Evidence:     5 source(s)
+Explanation:
+  La afirmación de que los humanos solo usan el 10% de su cerebro es un mito muy extendido pero completamente falso. Múltiples fuentes científicas confirman que este concepto es pseudociencia popular en Hollywood pero sin base real. Las imágenes de escáneres cerebrales (como PET) muestran que utilizamos prácticamente todas las áreas del cerebro, no solo el 10%. Aunque es una idea atractiva que sugiere que podríamos ser más inteligentes si usáramos más cerebro, la evidencia neurocientífica demuestra que todo nuestro cerebro está activo y cumple funciones importantes.

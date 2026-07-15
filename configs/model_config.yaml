@@ -1,0 +1,30 @@
+# VerifAI — Model Pipeline Configuration (Milestone 4)
+#
+# Mirrors the actual config stored inside the trained checkpoint
+# (models/verifai-classifier/best_model.pt), so this file documents what's
+# really running rather than restating training/config.yaml's intended
+# values. See training/config.yaml for the training-time hyperparameters.
+
+model:
+  vocab_size: 16000
+  embed_dim: 256
+  num_heads: 8
+  num_layers: 4
+  hidden_dim: 512
+  max_length: 256
+  num_labels: 4
+  dropout: 0.0          # inference mode — dropout disabled
+  labels: [true, false, misleading, unverifiable]
+
+paths:
+  checkpoint: "models/verifai-classifier/best_model.pt"
+  vocab: "models/verifai-classifier/vocab.json"
+  demo_claims: "data/sample_claims.json"
+  samples_output: "outputs/samples.txt"
+
+pipeline:
+  # Full run calls live retrieval (ChromaDB + Tavily) and Claude synthesis,
+  # same as the FastAPI backend. Costs a small amount of API credit and
+  # takes roughly 1-2 minutes for 10 claims.
+  use_retrieval: true
+  use_claude: true

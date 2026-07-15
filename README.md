@@ -144,6 +144,37 @@ python evaluation/ragas_eval.py       # RAGAS retrieval quality
 python evaluation/ablation.py         # 4-condition ablation study
 ```
 
+## Model Pipeline — single-command demo
+
+The full pipeline (data loading → retrieval → classifier + Claude verdict
+generation) runs end-to-end with one command:
+
+```bash
+python src/model_runner.py
+```
+
+This loads 10 curated demo claims (5 English, 5 Spanish, with ground-truth
+labels) from `data/sample_claims.json`, runs each through the same code path
+the FastAPI backend uses, and writes human-readable results to
+`outputs/samples.txt`. Configuration lives in `configs/model_config.yaml`;
+shared helpers in `utils/helpers.py`. The run calls live services (Tavily
+retrieval, Anthropic generation), takes roughly 1–2 minutes, and degrades
+gracefully to classifier-fallback mode if no `ANTHROPIC_API_KEY` is set.
+
+**Preliminary results** (run of 2026-07-13, all samples in `claude` mode):
+the full pipeline got **9/10** claims right — the one miss returned an honest
+*unverifiable* rather than a wrong label. The classifier alone got **4/10**
+on the same claims; most strikingly, it labeled three famous myths *true*
+(bleach cures COVID, faked moon landing, humans use 10% of their brains),
+and evidence retrieval corrected all three. n=10 is a demonstration, not a
+statistical result — but it previews the ablation question the final report
+will answer properly. Full samples and analysis: [`outputs/samples.txt`](outputs/samples.txt)
+and [`outputs/README.md`](outputs/README.md).
+
+A `Dockerfile` is included for containerized runs (`docker build -t verifai .`
+then `docker run --env-file .env verifai`). `start.sh` launches the backend
+and UI together for local development.
+
 ## Results
 
 ### The same claim, two languages, a 15-point gap
@@ -202,6 +233,49 @@ prediction without reasoning over what it just retrieved. I'm not
 hiding that — it's the real shape of a two-stage pipeline when one
 stage goes down, and it's more honest than pretending the demo always
 works.
+
+## Model Pipeline (Milestone 4)
+
+Single-command entry point that runs the full pipeline — intake, retrieval,
+classifier + Claude verdict, the same code path the FastAPI backend uses —
+on a curated 10-claim demo set (`data/sample_claims.json`: English/Spanish,
+health/geography/science/history domains, each with a ground-truth label):
+
+```bash
+python src/model_runner.py
+```
+
+Loads `configs/model_config.yaml`, runs inference on all 10 claims, and
+saves human-readable results to `outputs/samples.txt`. Code follows the
+pipeline template: `src/data_loader.py` (loads the demo set),
+`src/model_runner.py` (orchestrates inference and saves output),
+`utils/helpers.py` (config loading, output formatting) — thin wrappers
+around the existing `app/pipeline/` modules, not a second implementation.
+
+### What the samples show
+
+Two results worth calling out from an actual run:
+
+- **"Drinking bleach cures COVID-19"** — the raw classifier said **true**
+  (72%). Claude, reasoning over retrieved WHO/health-authority evidence,
+  corrected it to **false** (98%). The RAG value proposition working as
+  intended: retrieval catching a classifier error.
+- **"El sol sale por el este"** ("the sun rises in the east," ground truth:
+  true) — retrieval didn't surface evidence that actually addressed the
+  claim, so Claude returned **unverifiable** rather than asserting a fact
+  it couldn't ground in the retrieved passages. Honest under-confidence,
+  not a wrong answer.
+
+### Known issues
+
+- Calls live services (ChromaDB + Tavily retrieval, Claude for synthesis)
+  — same cost and latency as using the app itself, roughly 1–2 minutes and
+  a small amount of API credit for all 10 claims.
+- Live web retrieval means results aren't perfectly reproducible run to
+  run — see [Limitations](#limitations) for the broader discussion of
+  retrieval non-determinism.
+- A failed claim doesn't stop the run; its `outputs/samples.txt` entry
+  records the error in place of a verdict.
 
 ## Limitations
 

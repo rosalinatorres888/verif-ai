@@ -1,0 +1,12 @@
+venv/
+.venv313/
+.git/
+.agents/
+.claude/
+__pycache__/
+*.pyc
+.DS_Store
+corpus/chroma_db/
+outputs/*.png
+outputs/*.svg
+docs/assets/
