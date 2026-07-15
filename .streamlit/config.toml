@@ -1,2 +1,28 @@
 [theme]
-primaryColor = "#3B66C9"
+primaryColor = "#2E2FE0"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#FDEAE0"
+textColor = "#1A1A2E"
+linkColor = "#7C5FE0"
+borderColor = "#E8D9CF"
+linkUnderline = false
+
+violetColor = "#7C5FE0"
+violetBackgroundColor = "#EEE8FC"
+violetTextColor = "#5B3FB8"
+
+greenColor = "#1FA97A"
+greenBackgroundColor = "#DFF7EC"
+greenTextColor = "#136B4E"
+
+redColor = "#E5484D"
+redBackgroundColor = "#FCE4E4"
+redTextColor = "#A8272B"
+
+orangeColor = "#F2994A"
+orangeBackgroundColor = "#FDEEDC"
+orangeTextColor = "#B0611C"
+
+grayColor = "#6B7280"
+grayBackgroundColor = "#F1F2F4"
+grayTextColor = "#464B54"
