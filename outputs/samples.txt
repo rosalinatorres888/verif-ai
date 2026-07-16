@@ -1,16 +1,16 @@
 VerifAI — Model Pipeline Sample Outputs
-Generated: 2026-07-13 23:33:13
+Generated: 2026-07-15 23:12:04
 ============================================================
 
 [1] hc-001 (Spanish, domain=health)
 Claim:        Las vacunas causan autismo.
 Ground truth: false
 Verdict:      false (95% confidence)
-Classifier:   unverifiable (55%)
+Classifier:   unverifiable (49%)
 Generation:   claude
 Evidence:     5 source(s)
 Explanation:
-  La afirmación de que las vacunas causan autismo es falsa según múltiples estudios científicos y verificaciones. El mito se originó en un estudio fraudulento publicado en 1998 por Andrew Wakefield, que fue posteriormente retractado por la revista The Lancet en 2010 por considerarse totalmente falso. Investigaciones posteriores con más de 140,000 niños no han encontrado ninguna relación entre las vacunas y el autismo. Los especialistas y organismos científicos han demostrado repetidamente que no existe evidencia alguna de conexión entre la vacunación y el trastorno del espectro autista.
+  La afirmación de que las vacunas causan autismo es falsa según múltiples fuentes de verificación. Diferentes estudios científicos y especialistas demuestran que no existe relación alguna entre las vacunas y el autismo. Esta desinformación es un bulo histórico que ha sido desmentido repetidamente por la comunidad científica. Incluso estudios que examinaron más de 140.000 niños no encontraron ninguna asociación consistente entre las vacunas y el autismo. Las fuentes de verificación consultadas coinciden en que no hay evidencia científica que respalde esta afirmación.
 
 ------------------------------------------------------------
 
@@ -18,11 +18,11 @@ Explanation:
 Claim:        The Eiffel Tower is the tallest structure in Europe.
 Ground truth: false
 Verdict:      false (85% confidence)
-Classifier:   false (68%)
+Classifier:   false (55%)
 Generation:   claude
-Evidence:     4 source(s)
+Evidence:     5 source(s)
 Explanation:
-  The claim that the Eiffel Tower is the tallest structure in Europe is false. According to the evidence, the Eiffel Tower stands at 330 meters (1,083 feet) including its TV antenna and is the tallest structure in Paris. However, the evidence clearly states that it was only the tallest structure in the world until 1929 when the Chrysler Building in New York surpassed it. While the Eiffel Tower is tall, the evidence does not support that it is currently the tallest structure in Europe, and the title of '6 Famous Buildings Taller Than the Eiffel Tower' directly contradicts the claim.
+  The claim that the Eiffel Tower is the tallest structure in Europe is false. While the Eiffel Tower was indeed the tallest man-made structure in the world when completed in 1889, it lost that title to the Chrysler Building in New York in 1929. The evidence indicates the tower is 330 meters tall and is the tallest structure in Paris, but makes no claim that it is the tallest in all of Europe. Multiple taller structures exist in Europe today, including various television towers and skyscrapers.
 
 ------------------------------------------------------------
 
@@ -30,11 +30,11 @@ Explanation:
 Claim:        Drinking bleach cures COVID-19.
 Ground truth: false
 Verdict:      false (98% confidence)
-Classifier:   true (72%)
+Classifier:   true (37%)
 Generation:   claude
 Evidence:     5 source(s)
 Explanation:
-  The claim that drinking bleach cures COVID-19 is definitively false and extremely dangerous. Multiple authoritative sources, including the World Health Organization, explicitly state that drinking bleach, methanol, or ethanol does not prevent or cure COVID-19. These substances are poisons that can cause severe disability, organ damage, and death. While disinfectants may kill viruses on surfaces, they will not kill the virus inside the human body and should never be ingested.
+  The claim that drinking bleach cures COVID-19 is completely false and dangerous. Multiple credible health sources, including the World Health Organization, explicitly state that drinking bleach does NOT kill the COVID-19 virus in your body and can cause poisoning, disability, and death. While bleach may be used in cleaning products to kill the virus on surfaces, it should never be ingested. This misinformation has been promoted by conspiracy theorists as a "miracle cure," but it has no scientific basis and poses serious health risks.
 
 ------------------------------------------------------------
 
@@ -46,7 +46,7 @@ Classifier:   false (60%)
 Generation:   claude
 Evidence:     1 source(s)
 Explanation:
-  La afirmación sostiene que el sol sale por el este, lo cual es un hecho astronómico básico y verificable. Sin embargo, la evidencia proporcionada no contiene información relevante sobre la dirección en la que sale el sol. El fragmento citado de BBC News Mundo habla sobre diversas influencias del sol en nuestras vidas y menciona arco iris, pero no aborda el tema de los puntos cardinales ni la salida del sol. Aunque la afirmación es verdadera según el conocimiento general, no puede verificarse con la evidencia específica proporcionada.
+  La afirmación sostiene que el sol sale por el este, un hecho astronómico básico y ampliamente conocido. Sin embargo, la evidencia proporcionada no contiene información relevante sobre la dirección en la que sale el sol. El fragmento citado menciona aspectos sobre cómo el sol influye en nuestras vidas y referencias a arco iris, pero no aborda específicamente el punto cardinal por donde sale el sol. Aunque la afirmación es verdadera según el conocimiento científico establecido, no puede ser verificada con la evidencia proporcionada en este caso.
 
 ------------------------------------------------------------
 
@@ -54,59 +54,59 @@ Explanation:
 Claim:        5G towers spread the coronavirus.
 Ground truth: false
 Verdict:      false (95% confidence)
-Classifier:   false (65%)
+Classifier:   unverifiable (45%)
 Generation:   claude
 Evidence:     5 source(s)
 Explanation:
-  There is no scientific evidence linking 5G technology to the spread of coronavirus. Multiple authoritative sources, including the World Health Organization and independent fact-checking organizations, have rejected this conspiracy theory. Viruses cannot travel on radio waves or mobile networks, and coronavirus has spread widely in countries without 5G infrastructure. The claim has been thoroughly debunked by fact-checkers in at least 14 countries worldwide.
+  Multiple credible sources conclusively reject the claim that 5G towers spread coronavirus. Scientific experts from the World Health Organization and independent fact-checking organizations have found no evidence linking 5G technology to COVID-19 transmission. Viruses cannot travel on radio waves or mobile networks, and coronavirus has spread widely in countries without 5G infrastructure. The conspiracy theory has been thoroughly debunked by the scientific community, though it has unfortunately led to vandalism of cell towers in some countries.
 
 ------------------------------------------------------------
 
 [6] hc-006 (Spanish, domain=science)
 Claim:        La tierra es plana.
 Ground truth: false
-Verdict:      false (92% confidence)
-Classifier:   unverifiable (67%)
+Verdict:      false (95% confidence)
+Classifier:   false (55%)
 Generation:   claude
 Evidence:     1 source(s)
 Explanation:
-  La afirmación de que la Tierra es plana contradice evidencia científica observable y verificable. Según la fuente proporcionada, la curvatura de la Tierra comienza a notarse a partir de los 10 km de altitud y se hace más evidente a los 15 km. Además, los aviones pueden viajar en línea relativamente recta y dar la vuelta al mundo sin encontrar ningún borde, lo cual es consistente con un planeta esférico, no plano. Estos hechos observables demuestran que la Tierra tiene forma esférica.
+  La afirmación de que la Tierra es plana es científicamente incorrecta y contradice siglos de evidencia astronómica, física y observacional. Aunque la evidencia proporcionada no aborda directamente esta afirmación específica, el clasificador VerifAI indica que es falsa con una confianza del 55%. La forma esférica de la Tierra ha sido comprobada mediante fotografías satelitales, circunnavegación, observaciones astronómicas y principios físicos fundamentales. Esta afirmación es un ejemplo común de desinformación que ha sido desmentida repetidamente por la comunidad científica.
 
 ------------------------------------------------------------
 
 [7] hc-007 (English, domain=science)
 Claim:        Water boils at 100 degrees Celsius at sea level.
 Ground truth: true
-Verdict:      true (95% confidence)
-Classifier:   true (66%)
+Verdict:      true (92% confidence)
+Classifier:   true (76%)
 Generation:   claude
 Evidence:     5 source(s)
 Explanation:
-  The claim that water boils at 100 degrees Celsius at sea level is well-supported by multiple sources. All provided evidence consistently confirms this temperature as the boiling point under standard atmospheric pressure at sea level. While the evidence also notes that boiling point varies with altitude and pressure, this does not contradict the claim but rather provides additional context. The claim is accurate and specific to sea level conditions.
+  The claim that water boils at 100 degrees Celsius at sea level is well-supported by multiple sources. All provided evidence consistently confirms that water boils at 100°C (212°F) when atmospheric pressure is at sea level, which is approximately 1 atmosphere (atm) or 1013 hPa. The sources explain that this boiling point changes with altitude because atmospheric pressure decreases at higher elevations, causing water to boil at lower temperatures. This is a standard scientific fact that is verified across educational and scientific sources.
 
 ------------------------------------------------------------
 
 [8] hc-008 (Spanish, domain=science)
 Claim:        El cambio climático es una conspiración inventada.
 Ground truth: false
-Verdict:      false (85% confidence)
-Classifier:   false (77%)
+Verdict:      false (82% confidence)
+Classifier:   false (79%)
 Generation:   claude
 Evidence:     1 source(s)
 Explanation:
-  La afirmación de que el cambio climático es una conspiración inventada es falsa. Existe un consenso científico sólido sobre la realidad del cambio climático y su relación con el calentamiento global, respaldado por evidencia científica robusta. Las teorías conspirativas que intentan negar el cambio climático carecen de fundamento y frecuentemente manipulan información para cuestionar hechos científicamente comprobados. La evidencia verificada demuestra que estas narrativas conspirativas son parte de campañas de desinformación.
+  El cambio climático no es una conspiración inventada. Existe un consenso científico abrumador respaldado por múltiples instituciones científicas internacionales que confirman que el cambio climático es real y está siendo acelerado por actividades humanas. El Acuerdo de París, firmado por casi todos los países del mundo, reconoce esta realidad científica. Aunque el clima siempre ha experimentado variaciones naturales, la evidencia científica demuestra que el calentamiento actual es causado principalmente por emisiones humanas de gases de efecto invernadero.
 
 ------------------------------------------------------------
 
 [9] hc-009 (English, domain=history)
 Claim:        The moon landing in 1969 was faked.
 Ground truth: false
-Verdict:      false (95% confidence)
-Classifier:   true (70%)
+Verdict:      false (85% confidence)
+Classifier:   false (49%)
 Generation:   claude
 Evidence:     5 source(s)
 Explanation:
-  The claim that the 1969 moon landing was faked is a well-known conspiracy theory that has been thoroughly debunked. The evidence provided discusses the existence and prevalence of moon landing conspiracy theories but does not provide credible support for the claim itself. In fact, the evidence includes technical explanations showing why faking the landing would have been impossible with 1969 technology, such as the primitive state of film and video recording that could not simulate lunar conditions. The moon landing conspiracy theory persists in popular culture despite overwhelming scientific evidence and documentation proving the Apollo 11 mission successfully landed humans on the moon.
+  The claim that the 1969 moon landing was faked is not supported by evidence. Multiple fact-checking sources confirm that the Apollo 11 moon landing did occur and that various conspiracy theories about it being faked have been thoroughly debunked. Technical analysis shows that film and video technology in 1969 was too primitive to fake the footage convincingly. The phone call between President Nixon and the astronauts was real, and there is no credible evidence supporting the hoax theory.
 
 ------------------------------------------------------------
 
@@ -114,8 +114,8 @@ Explanation:
 Claim:        Los humanos solo usan el 10% de su cerebro.
 Ground truth: false
 Verdict:      false (95% confidence)
-Classifier:   true (51%)
+Classifier:   true (72%)
 Generation:   claude
 Evidence:     5 source(s)
 Explanation:
-  La afirmación de que los humanos solo usan el 10% de su cerebro es un mito muy extendido pero completamente falso. Múltiples fuentes científicas confirman que este concepto es pseudociencia popular en Hollywood pero sin base real. Las imágenes de escáneres cerebrales (como PET) muestran que utilizamos prácticamente todas las áreas del cerebro, no solo el 10%. Aunque es una idea atractiva que sugiere que podríamos ser más inteligentes si usáramos más cerebro, la evidencia neurocientífica demuestra que todo nuestro cerebro está activo y cumple funciones importantes.
+  La afirmación de que los humanos solo usan el 10% de su cerebro es un mito ampliamente difundido pero completamente falso. Gracias a los avances en tecnología de imagen cerebral, los científicos han comprobado que no existen regiones 'apagadas' en el cerebro humano. Este neuromito se originó probablemente de malinterpretaciones de estudios neurocientíficos del siglo XIX y afirmaciones del profesor William James a principios del siglo XX. Expertos en neurociencia, como Barry Gordon del Johns Hopkins Medical Institution, han confirmado categóricamente que esta creencia carece de base científica.

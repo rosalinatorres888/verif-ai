@@ -285,14 +285,13 @@ and UI together for local development.
 
 ### What the samples show
 
-**Overall** (run of 2026-07-13, all samples in `claude` mode): the full
-pipeline got **9/10** claims right — the one miss returned an honest
-*unverifiable* rather than a wrong label. The classifier alone got **4/10**
-on the same claims; most strikingly, it labeled three famous myths *true*
-(bleach cures COVID, faked moon landing, humans use 10% of their brains),
-and evidence retrieval corrected all three. n=10 is a demonstration, not a
-statistical result — but it previews the ablation question the final report
-answers properly. Full samples and per-sample analysis:
+**Overall** (run of 2026-07-16, clean model, all samples in `claude` mode):
+the full pipeline got **9/10** claims right — the one miss returned an honest
+*unverifiable* rather than a wrong label. The classifier alone got **5/10**
+on the same claims; most strikingly, it labeled two famous myths *true*
+(bleach cures COVID, humans use 10% of their brains), and evidence retrieval
+corrected both. n=10 is a demonstration, not a statistical result — but it
+previews the ablation question the final report answers properly. Full samples and per-sample analysis:
 [`outputs/samples.txt`](outputs/samples.txt) and
 [`outputs/README.md`](outputs/README.md).
 

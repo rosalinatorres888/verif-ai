@@ -13,20 +13,22 @@ truth, final verdict + confidence, the raw classifier signal, the generation
 mode (`claude` vs `classifier_fallback`), evidence count, and the generated
 explanation.
 
-**What the samples show** (run of 2026-07-13, all 10 in `claude` mode):
+**What the samples show** (run of 2026-07-16, clean de-contaminated model,
+all 10 in `claude` mode):
 
 - **Final pipeline: 9/10 correct.** The one miss ("El sol sale por el este")
   returned *unverifiable* rather than a wrong label — retrieval found no
   usable evidence for a common-knowledge claim, and the generator correctly
   refused to assert beyond its evidence.
-- **Classifier alone: 4/10 correct** on the same claims. The retrieval +
-  generation layer more than doubled accuracy on this demo set (n=10 — a
+- **Classifier alone: 5/10 correct** on the same claims. The retrieval +
+  generation layer nearly doubled accuracy on this demo set (n=10 — a
   demonstration, not a statistical result).
-- **The classifier's failure pattern is informative:** it labeled three
-  famous myths *true* (bleach cures COVID, faked moon landing, 10%-of-brain).
-  A 6.3M-parameter model trained on claim text alone struggles with claims
-  whose surface form is confidently declarative — exactly the shape
-  misinformation takes, and exactly what evidence retrieval corrects.
+- **The classifier's failure pattern is informative:** it labeled two
+  famous myths *true* (drinking bleach cures COVID, humans use 10% of their
+  brains), and evidence retrieval corrected both. A 6.3M-parameter model
+  trained on claim text alone struggles with claims whose surface form is
+  confidently declarative — exactly the shape misinformation takes, and
+  exactly what evidence retrieval corrects.
 - **Known artifact:** in the Eiffel Tower sample the verdict is correct but
   the cited reasoning is imperfect (it leans on the Chrysler Building, which
   is not in Europe). Kept as-is — an honest example of an LLM producing the
