@@ -105,7 +105,13 @@ def evaluate(model, loader, criterion, device):
 def train(config: dict):
     torch.manual_seed(config["seed"])
     np.random.seed(config["seed"])
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # Prefer CUDA, then Apple Silicon GPU (MPS), then CPU.
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
     print(f"Device: {device}")
     if device.type == "cpu":
         print("WARNING: No GPU detected. Training will be very slow.")
@@ -115,10 +121,12 @@ def train(config: dict):
     print(f"\nLoading tokenizer from {VOCAB_PATH}...")
     tokenizer = BPETokenizer.load(str(VOCAB_PATH))
 
-    # Load datasets
-    print("\nLoading datasets...")
-    train_ds = ClaimDataset(str(TRAIN_PATH), tokenizer, config["max_length"])
-    val_ds   = ClaimDataset(str(VAL_PATH),   tokenizer, config["max_length"])
+    # Load datasets (paths overridable via --train/--val for clean-split runs)
+    train_path = config.get("train_path", str(TRAIN_PATH))
+    val_path   = config.get("val_path",   str(VAL_PATH))
+    print(f"\nLoading datasets...\n  train: {train_path}\n  val:   {val_path}")
+    train_ds = ClaimDataset(train_path, tokenizer, config["max_length"])
+    val_ds   = ClaimDataset(val_path,   tokenizer, config["max_length"])
     train_loader = DataLoader(train_ds, batch_size=config["batch_size"],
                               shuffle=True,  num_workers=0, pin_memory=device.type=="cuda")
     val_loader   = DataLoader(val_ds,   batch_size=config["batch_size"]*2,
@@ -201,7 +209,7 @@ def train(config: dict):
             best_val_f1 = val_f1
             best_epoch  = epoch
             patience_ctr = 0
-            ckpt_path = CKPT_DIR / "best_model.pt"
+            ckpt_path = CKPT_DIR / config.get("ckpt_name", "best_model.pt")
             torch.save({
                 "epoch": epoch, "model_state": model.state_dict(),
                 "optimizer_state": optimizer.state_dict(),
@@ -215,11 +223,12 @@ def train(config: dict):
                 print(f"  Early stopping at epoch {epoch}.")
                 break
 
-    with open(LOG_PATH, "w") as f:
+    log_path = config.get("log_path", str(LOG_PATH))
+    with open(log_path, "w") as f:
         json.dump(training_log, f, indent=2)
 
     print(f"\nTraining complete. Best val_f1={best_val_f1:.4f} at epoch {best_epoch}")
-    print(f"Checkpoint: {CKPT_DIR / 'best_model.pt'}")
+    print(f"Checkpoint: {CKPT_DIR / config.get('ckpt_name', 'best_model.pt')}")
 
     print(f"\nFinal classification report (val set):")
     print(classification_report(
@@ -234,10 +243,23 @@ if __name__ == "__main__":
     parser.add_argument("--epochs", type=int,   default=DEFAULT_CONFIG["num_epochs"])
     parser.add_argument("--lr",     type=float, default=DEFAULT_CONFIG["learning_rate"])
     parser.add_argument("--batch",  type=int,   default=DEFAULT_CONFIG["batch_size"])
+    parser.add_argument("--train", type=str, default=str(TRAIN_PATH),
+                        help="training CSV (use data/train_clean.csv for the "
+                             "de-contaminated run)")
+    parser.add_argument("--val", type=str, default=str(VAL_PATH),
+                        help="validation CSV")
+    parser.add_argument("--ckpt-name", type=str, default="best_model.pt",
+                        help="checkpoint filename inside models/verifai-classifier/")
+    parser.add_argument("--log-path", type=str, default=str(LOG_PATH),
+                        help="where to write the per-epoch training log")
     args = parser.parse_args()
 
     config = DEFAULT_CONFIG.copy()
     config["num_epochs"]    = args.epochs
     config["learning_rate"] = args.lr
     config["batch_size"]    = args.batch
+    config["train_path"]    = args.train
+    config["val_path"]      = args.val
+    config["ckpt_name"]     = args.ckpt_name
+    config["log_path"]      = args.log_path
     train(config)

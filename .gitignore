@@ -9,6 +9,7 @@ __pycache__/
 .pytest_cache/
 *.pt
 !models/verifai-classifier/best_model.pt
+!models/verifai-classifier/best_model_contaminated.pt
 ~$*
 .agents/
 .claude/

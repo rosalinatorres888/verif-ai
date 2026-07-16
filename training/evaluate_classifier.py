@@ -74,10 +74,14 @@ def plot_confusion_matrix(y_true, y_pred, save_path):
     plt.close()
 
 
-def evaluate():
+def evaluate(ckpt_path=None, results_name=None, cm_name=None):
     print("\n" + "="*60)
     print("VerifAI 2.0 — Block E: Test Set Evaluation")
     print("="*60)
+
+    ckpt_path    = Path(ckpt_path or CKPT_PATH)
+    results_name = results_name or "classifier_results.json"
+    cm_name      = cm_name or "confusion_matrix.png"
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
@@ -86,7 +90,8 @@ def evaluate():
     tokenizer = BPETokenizer.load(str(VOCAB_PATH))
 
     print(f"Loading checkpoint...")
-    ckpt   = torch.load(CKPT_PATH, map_location=device, weights_only=False)
+    print(f"  checkpoint: {ckpt_path}")
+    ckpt   = torch.load(ckpt_path, map_location=device, weights_only=False)
     config = ckpt.get("config", {})
     print(f"  Epoch: {ckpt.get('epoch')}  Val F1: {ckpt.get('val_f1')}")
 
@@ -172,7 +177,7 @@ def evaluate():
     else:
         print("Test set is EN-only (LIAR). ES evaluation in Block I.")
 
-    cm_path = OUT_DIR / "confusion_matrix.png"
+    cm_path = OUT_DIR / cm_name
     plot_confusion_matrix(labels, preds, cm_path)
     print(f"\nConfusion matrix saved to {cm_path}")
 
@@ -190,7 +195,7 @@ def evaluate():
         "en":                     en_results,
         "es":                     es_results,
     }
-    out_path = OUT_DIR / "classifier_results.json"
+    out_path = OUT_DIR / results_name
     with open(out_path, "w") as f:
         json.dump(results, f, indent=2)
 
@@ -199,4 +204,13 @@ def evaluate():
 
 
 if __name__ == "__main__":
-    evaluate()
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--ckpt", type=str, default=None,
+                    help="checkpoint to evaluate (default: best_model.pt)")
+    ap.add_argument("--results-name", type=str, default=None,
+                    help="filename for the results JSON inside outputs/")
+    ap.add_argument("--cm-name", type=str, default=None,
+                    help="filename for the confusion matrix PNG inside outputs/")
+    a = ap.parse_args()
+    evaluate(ckpt_path=a.ckpt, results_name=a.results_name, cm_name=a.cm_name)

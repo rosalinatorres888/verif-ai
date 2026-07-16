@@ -1,0 +1,31 @@
+{
+  "test_rows": 1283,
+  "test_rows_leaked": 343,
+  "test_leak_pct": 26.73,
+  "leaked_arrived_via_train_source": {
+    "multifc": 391,
+    "liar": 4
+  },
+  "leaked_same_label_rows": 333,
+  "leaked_contradictory_label_rows": 62,
+  "val_rows_also_in_train": 669,
+  "train_rows": 37608,
+  "train_unique_texts": 25436,
+  "train_duplicate_rows_from_upsampling": 12172,
+  "train_rows_after_clean": 36312,
+  "train_rows_removed": 1296,
+  "val_rows_after_clean": 3354,
+  "val_rows_removed": 40,
+  "train_label_distribution_after": {
+    "false": 10402,
+    "true": 9342,
+    "unverifiable": 8339,
+    "misleading": 8229
+  },
+  "train_language_distribution_after": {
+    "en": 35321,
+    "es": 991
+  },
+  "residual_train_test_overlap": 0,
+  "residual_train_val_overlap": 0
+}

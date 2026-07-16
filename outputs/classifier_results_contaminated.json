@@ -1,0 +1,32 @@
+{
+  "run_date": "2026-06-17",
+  "checkpoint_epoch": 15,
+  "checkpoint_val_f1": 0.40485216811428726,
+  "n_test": 1283,
+  "f1_macro": 0.3647,
+  "f1_weighted": 0.3986,
+  "precision_macro": 0.3749,
+  "recall_macro": 0.3643,
+  "per_class_f1": {
+    "true": 0.5503,
+    "false": 0.3828,
+    "misleading": 0.2809,
+    "unverifiable": 0.2449
+  },
+  "latency_ms_per_example": 4.89,
+  "en": {
+    "n": 1283,
+    "f1_macro": 0.3647,
+    "per_class": {
+      "true": 0.5503,
+      "false": 0.3828,
+      "misleading": 0.2809,
+      "unverifiable": 0.2449
+    }
+  },
+  "es": {
+    "n": 0,
+    "f1_macro": 0.0,
+    "per_class": {}
+  }
+}

@@ -32,12 +32,28 @@ explanation.
   is not in Europe). Kept as-is — an honest example of an LLM producing the
   right label with a wobbly justification.
 
-## Evaluation artifacts (Milestone 3)
+## Evaluation artifacts
 
-- `classifier_results.json` — full test-set metrics from
-  `training/evaluate_classifier.py` (F1 macro/weighted, per-class breakdown,
-  latency).
-- `confusion_matrix.png` — test-set confusion matrix, same script.
+- `classifier_results.json` — full test-set metrics for the **clean**
+  (de-contaminated) model: macro-F1 0.3313. From
+  `training/evaluate_classifier.py`.
+- `confusion_matrix.png` — test-set confusion matrix for the clean model.
+- `decontamination_report.json` — the audit that found 26.7% of the test
+  set inside the training set (from `training/decontaminate.py`).
+- `classifier_results_contaminated.json` / `confusion_matrix_contaminated.png`
+  — the original pre-audit metrics (macro-F1 0.3647), preserved so the
+  10.1% inflation is reproducible rather than just asserted.
+
+Reproduce either:
+
+```bash
+python training/decontaminate.py                     # audit + clean splits
+python training/evaluate_classifier.py               # clean model (default)
+python training/evaluate_classifier.py \
+    --ckpt models/verifai-classifier/best_model_contaminated.pt \
+    --results-name classifier_results_contaminated.json \
+    --cm-name confusion_matrix_contaminated.png      # the old number
+```
 
 ## Figures used in the main README
 

@@ -107,11 +107,15 @@ this from scratch instead.
   <img src="outputs/reranker_explainer.svg" alt="One checkpoint, two jobs: classifier signal and evidence reranker" width="600">
 </p>
 
-I trained on 37,608 examples (LIAR + MultiFC + FakeDeS + a synthetic ES
-corpus I generated to shore up the Spanish side). Current result: val
-F1=0.4049, test F1=0.3647 on the held-out LIAR test split (1,283
-claims — see `outputs/classifier_results.json`, per-class breakdown
+I trained on 36,312 de-contaminated examples (LIAR + MultiFC + FakeDeS +
+a synthetic ES corpus I generated to shore up the Spanish side). Current
+result: val F1=0.3849, **test F1=0.3313** on the held-out LIAR test split
+(1,283 claims — see `outputs/classifier_results.json`, per-class breakdown
 and confusion matrix below).
+
+> **Why the corpus is 36,312 and not 37,608:** an audit found that 26.7% of
+> my "held-out" test set was sitting in my training set. See
+> [The contamination I found in my own data](#the-contamination-i-found-in-my-own-data).
 
 ### The Spanish data problem
 
@@ -179,14 +183,59 @@ for the best.
 
 | Class | F1 |
 |---|:---:|
-| true | 0.5503 |
-| false | 0.3828 |
-| misleading | 0.2809 |
-| unverifiable | 0.2449 |
+| true | 0.4961 |
+| false | 0.3614 |
+| misleading | 0.2316 |
+| unverifiable | 0.2362 |
 
 The model is best at spotting straightforwardly true claims and worst
 at "misleading" and "unverifiable" — the two classes that require the
 most nuance, and the two with the least clean training signal.
+
+### The contamination I found in my own data
+
+Late in the project I audited my splits for text overlap. 26.7% of my
+held-out test set — 343 of 1,283 claims — was in my training set.
+
+The cause is a merge artifact I never thought to check for. My corpus
+combines MultiFC with LIAR. MultiFC aggregates claims scraped from 26
+fact-checking sites, and one of those sites is PolitiFact. LIAR *is*
+PolitiFact. So I carefully preserved LIAR's native test boundary on the
+LIAR side and breached it from the MultiFC side without either dataset
+saying a word. 339 of the leaked rows arrived via MultiFC; 333 carried
+the same label, meaning the model had simply memorized them.
+
+I rebuilt the splits ([`training/decontaminate.py`](training/decontaminate.py)),
+retrained on Colab with the identical config and hardware as the original
+run — so the data was the only variable — and re-evaluated:
+
+| | Contaminated | Clean | Δ |
+|---|:---:|:---:|:---:|
+| **Test F1 macro** | 0.3647 | **0.3313** | −0.0334 |
+| Test F1 weighted | 0.3986 | 0.3618 | −0.0368 |
+| Val F1 | 0.4049 | 0.3849 | −0.0200 |
+| true | 0.5503 | 0.4961 | −0.0542 |
+| false | 0.3828 | 0.3614 | −0.0214 |
+| misleading | 0.2809 | 0.2316 | −0.0493 |
+| unverifiable | 0.2449 | 0.2362 | −0.0087 |
+
+**The leak was inflating my headline F1 by 10.1%.** The corrected 0.3313
+still beats the 4-class random baseline (0.25) by a comfortable margin, so
+the model learned something real — just 10% less than I'd been claiming.
+The classes that lost most (`true`, `misleading`) are the ones with the
+most same-label leaked rows, which is exactly the fingerprint you'd expect
+from memorization.
+
+Everything else in this repo is unaffected, and I checked rather than
+assumed: the ablation, the RAGAS scores, and the 10-claim demo all run on
+hand-written claims that appear in **zero** splits, and every removed row
+was English MultiFC — the Spanish corpus is 991 rows before and after, so
+the data-scarcity findings don't depend on the leak.
+
+The contaminated checkpoint and its metrics are preserved
+(`models/verifai-classifier/best_model_contaminated.pt`,
+`outputs/classifier_results_contaminated.json`) so the comparison is
+reproducible.
 
 ### When Claude goes quiet
 
@@ -273,9 +322,13 @@ Two individual results worth calling out:
 ## Limitations
 
 - **The test set is English-only.** 1,283 held-out LIAR claims, zero
-  Spanish. My reported test F1 (0.3647) is an English number. Spanish
+  Spanish. My reported test F1 (0.3313) is an English number. Spanish
   evaluation right now is 56 FakeDeS validation examples — not enough
   to claim a bilingual result.
+- **The de-contamination is exact-match only.** I removed test claims
+  appearing verbatim in train. Near-duplicates — the same claim reworded
+  across two fact-checking sites — would survive that filter, so 0.3313
+  is a tighter bound than 0.3647 but not provably a floor.
 - **Wording moves the label, not just the confidence.** I reworded the
   pyramid claim slightly and the prediction flipped from false to
   unverifiable. I haven't measured how often that happens — but it's a
