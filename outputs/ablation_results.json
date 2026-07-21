@@ -5,7 +5,7 @@
       "condition": "full_pipeline",
       "f1_macro": 0.4167,
       "accuracy": 0.9,
-      "latency_p50_sec": 12.09,
+      "latency_p50_sec": 12.81,
       "generation_modes": {
         "claude": 10
       },
@@ -28,7 +28,7 @@
         {
           "claim_id": "hc-004",
           "ground_truth": "true",
-          "predicted": "misleading"
+          "predicted": "unverifiable"
         },
         {
           "claim_id": "hc-005",
@@ -64,9 +64,9 @@
     },
     {
       "condition": "no_rag",
-      "f1_macro": 0.4,
-      "accuracy": 0.8,
-      "latency_p50_sec": 6.56,
+      "f1_macro": 0.4167,
+      "accuracy": 0.9,
+      "latency_p50_sec": 6.88,
       "generation_modes": {
         "claude": 10
       },
@@ -74,7 +74,7 @@
         {
           "claim_id": "hc-001",
           "ground_truth": "false",
-          "predicted": "unverifiable"
+          "predicted": "false"
         },
         {
           "claim_id": "hc-002",
@@ -127,7 +127,7 @@
       "condition": "no_classifier",
       "f1_macro": 0.4167,
       "accuracy": 0.9,
-      "latency_p50_sec": 6.95,
+      "latency_p50_sec": 7.45,
       "generation_modes": {
         "claude": 10
       },
@@ -150,7 +150,7 @@
         {
           "claim_id": "hc-004",
           "ground_truth": "true",
-          "predicted": "misleading"
+          "predicted": "unverifiable"
         },
         {
           "claim_id": "hc-005",
@@ -186,9 +186,9 @@
     },
     {
       "condition": "baseline",
-      "f1_macro": 0.2333,
-      "accuracy": 0.7,
-      "latency_p50_sec": 6.22,
+      "f1_macro": 0.2143,
+      "accuracy": 0.6,
+      "latency_p50_sec": 6.88,
       "generation_modes": {
         "claude": 10
       },
@@ -201,7 +201,7 @@
         {
           "claim_id": "hc-002",
           "ground_truth": "false",
-          "predicted": "false"
+          "predicted": "unverifiable"
         },
         {
           "claim_id": "hc-003",
@@ -236,12 +236,12 @@
         {
           "claim_id": "hc-009",
           "ground_truth": "false",
-          "predicted": "false"
+          "predicted": "unverifiable"
         },
         {
           "claim_id": "hc-010",
           "ground_truth": "false",
-          "predicted": "unverifiable"
+          "predicted": "false"
         }
       ]
     }
