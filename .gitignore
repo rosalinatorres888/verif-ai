@@ -13,3 +13,6 @@ __pycache__/
 ~$*
 .agents/
 .claude/
+
+# Personal drafts — not published until reviewed
+docs/technical-report.md
