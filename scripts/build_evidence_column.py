@@ -43,15 +43,34 @@ from app.pipeline.retrieval import retrieve_evidence
 CHECKPOINT_EVERY = 50  # rows between incremental writes, so long runs survive a crash
 
 
+# Optional NLI stance reranker (set in main when --nli-gate is passed).
+_NLI = None
+_NLI_GATE = None
+
+
 def build_evidence_text(claim: str, language: str, top_k: int, max_chars: int, sep: str) -> str:
-    """Retrieve evidence for one claim and flatten the top-k passages into one string."""
+    """Retrieve evidence for one claim and flatten the top-k passages into one string.
+
+    Default: keep the top-k retrieved passages (ranked by cosine*credibility).
+    With --nli-gate: keep only passages whose NLI stance (P(entail)+P(contradict)
+    = 1 - P(neutral)) clears the gate, ranked by stance — i.e. passages that
+    actually support or refute the claim, not merely mention its topic.
+    """
     evidence = retrieve_evidence(claim, language)  # already sorted best-first
-    passages = []
-    for item in evidence[:top_k]:
-        passage = (item.get("passage") or "").strip()
-        if passage:
-            passages.append(passage[:max_chars])
-    return sep.join(passages)
+    candidates = [(item.get("passage") or "").strip() for item in evidence]
+    candidates = [p for p in candidates if p]
+
+    if _NLI is not None and candidates:
+        scores = _NLI.stance(claim, candidates)
+        ranked = sorted(
+            ((s["stance"], p) for s, p in zip(scores, candidates) if s["stance"] >= _NLI_GATE),
+            key=lambda x: x[0], reverse=True,
+        )
+        chosen = [p for _, p in ranked[:top_k]]
+    else:
+        chosen = candidates[:top_k]
+
+    return sep.join(p[:max_chars] for p in chosen)
 
 
 def parse_args(argv=None) -> argparse.Namespace:
@@ -73,6 +92,14 @@ def parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--fast", action="store_true",
                    help="Skip the reranker cross-encoder; rank by similarity*credibility only. "
                         "Much faster for large CSVs; ranking is near-identical for corpus-only.")
+    p.add_argument("--nli-gate", type=float, default=None,
+                   help="Enable NLI stance gating: keep only passages with stance "
+                        "(P(entail)+P(contradict)) >= this value (e.g. 0.5). Fixes "
+                        "topical-but-not-verifying retrieval.")
+    p.add_argument("--nli-model", default=None, help="NLI model id (default: multilingual MiniLMv2 XNLI)")
+    p.add_argument("--nli-candidates", type=int, default=10,
+                   help="Retrieve up to this many candidates for NLI to rerank (sets retrieval TOP_K).")
+    p.add_argument("--nli-batch", type=int, default=16, help="NLI batch size")
     p.add_argument("--overwrite", action="store_true",
                    help="Re-retrieve rows that already have evidence (default: only fill blanks)")
     p.add_argument("--limit", type=int, default=None, help="Process only the first N rows (for testing)")
@@ -102,6 +129,15 @@ def main(argv=None) -> int:
     if args.fast:
         retrieval.score_batch = lambda q, passages, lang: [1.0] * len(passages)
         print("[cfg] FAST mode: reranker cross-encoder skipped")
+    if args.nli_gate is not None:
+        global _NLI, _NLI_GATE
+        from app.pipeline.nli_reranker import NLIReranker, DEFAULT_MODEL
+        # Widen retrieval recall so NLI has real candidates to judge.
+        retrieval.TOP_K = max(retrieval.TOP_K, args.nli_candidates)
+        _NLI = NLIReranker(model_name=args.nli_model or DEFAULT_MODEL, batch_size=args.nli_batch)
+        _NLI_GATE = args.nli_gate
+        print(f"[cfg] NLI GATE enabled: model={args.nli_model or DEFAULT_MODEL} "
+              f"device={_NLI.device} gate={_NLI_GATE} candidates={retrieval.TOP_K}")
 
     df = pd.read_csv(in_path)
     if args.text_col not in df.columns:
