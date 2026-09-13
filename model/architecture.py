@@ -4,16 +4,26 @@ Custom transformer encoder for bilingual misinformation classification.
 Built entirely from scratch in PyTorch — no pretrained weights.
 
 Architecture:
-  TokenEmbedding + PositionalEncoding + LanguageEmbedding
+  TokenEmbedding + PositionalEncoding + LanguageEmbedding + SegmentEmbedding
   → 4x TransformerEncoderBlock (MHA + FFN + LayerNorm + Dropout)
   → [CLS] pooling
   → ClassificationHead (Linear → ReLU → Dropout → Linear)
   → 4-class softmax (true / false / misleading / unverifiable)
 
+Cross-encoder mode (lever 1): when `token_type_ids` is supplied, the input is
+a [CLS] claim [SEP] evidence [SEP] pair. A learned segment embedding lets the
+model distinguish claim tokens (segment 0) from evidence tokens (segment 1),
+so it can verify the claim *against* the evidence rather than judging the claim
+in isolation. When `token_type_ids` is None the model behaves exactly as before
+(claim-only), so this change is backward-compatible.
+
 Usage:
     from model.architecture import VerifAIClassifier
     model = VerifAIClassifier(vocab_size=16000)
+    # claim-only (unchanged):
     logits = model(input_ids, attention_mask, language_ids)
+    # claim + evidence (new):
+    logits = model(input_ids, attention_mask, language_ids, token_type_ids)
 """
 import math
 import torch
@@ -279,6 +289,7 @@ class VerifAIClassifier(nn.Module):
         max_length: int   = 256,
         num_classes: int  = 4,
         num_languages: int = 2,
+        num_segments: int = 2,
         dropout: float    = 0.1,
         pad_id: int       = 0,
     ):
@@ -289,6 +300,10 @@ class VerifAIClassifier(nn.Module):
         self.token_emb    = TokenEmbedding(vocab_size, embed_dim, pad_id)
         self.pos_enc      = PositionalEncoding(embed_dim, max_length, dropout)
         self.lang_emb     = LanguageEmbedding(num_languages, embed_dim)
+        # Segment (token-type) embedding: 0 = claim, 1 = evidence.
+        # Enables cross-encoder claim+evidence input (lever 1).
+        self.segment_emb  = nn.Embedding(num_segments, embed_dim)
+        nn.init.normal_(self.segment_emb.weight, std=0.02)
         self.embed_norm   = nn.LayerNorm(embed_dim)
         self.embed_drop   = nn.Dropout(p=dropout)
 
@@ -314,9 +329,13 @@ class VerifAIClassifier(nn.Module):
         input_ids:      torch.Tensor,
         attention_mask: torch.Tensor = None,
         language_ids:   torch.Tensor = None,
+        token_type_ids: torch.Tensor = None,
     ) -> torch.Tensor:
         """
         Forward pass.
+
+        token_type_ids: [batch, seq_len] — 0=claim, 1=evidence. Optional.
+            When None, the model runs in claim-only mode (backward-compatible).
         Returns logits [batch, num_classes].
         """
         B, T = input_ids.shape
@@ -330,6 +349,11 @@ class VerifAIClassifier(nn.Module):
         # Language embedding (add bilingual signal)
         if language_ids is not None:
             x = x + self.lang_emb(language_ids, T)        # [B, T, embed_dim]
+
+        # Segment embedding (claim vs. evidence) — cross-encoder signal.
+        # Skipped when absent so claim-only inputs are unchanged.
+        if token_type_ids is not None:
+            x = x + self.segment_emb(token_type_ids)      # [B, T, embed_dim]
 
         x = self.embed_norm(x)
         x = self.embed_drop(x)
@@ -352,13 +376,14 @@ class VerifAIClassifier(nn.Module):
         input_ids:      torch.Tensor,
         attention_mask: torch.Tensor = None,
         language_ids:   torch.Tensor = None,
+        token_type_ids: torch.Tensor = None,
     ) -> tuple:
         """
         Convenience method returning (predicted_class, probabilities).
         """
         self.eval()
         with torch.no_grad():
-            logits = self.forward(input_ids, attention_mask, language_ids)
+            logits = self.forward(input_ids, attention_mask, language_ids, token_type_ids)
             probs  = F.softmax(logits, dim=-1)
             preds  = torch.argmax(probs, dim=-1)
         return preds, probs

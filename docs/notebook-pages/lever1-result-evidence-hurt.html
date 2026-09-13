@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VerifAI — Lever 1 Result: evidence grounding hurt (and why that matters)</title>
+<style>
+  html, body { margin:0; padding:0; }
+  body { background:#eceae4; display:flex; justify-content:center; padding:32px 16px;
+    font-family:"Bradley Hand","Chalkboard SE","Marker Felt","Comic Sans MS",cursive; }
+  .sheet { max-width:820px; width:100%; background:#fdfaf1;
+    background-image:repeating-linear-gradient(#fdfaf1 0 27px, #d9e2ec 27px 28px);
+    box-shadow:0 12px 34px rgba(31,41,51,.28); border-radius:4px;
+    padding:34px 40px 40px 60px; position:relative; color:#1f2933; font-size:18px; line-height:28px; }
+  .sheet:before{ content:""; position:absolute; top:0; bottom:0; left:48px; width:2px; background:#c1440e; opacity:.55; }
+  h1 { font-size:29px; margin:4px 0 2px; display:inline-block; }
+  .under { height:0; border-bottom:3px solid #1f2933; width:110%; margin:-2px 0 18px -6px; transform:rotate(-.5deg); }
+  .sub { color:#0f6f6c; font-size:16px; margin:0 0 16px; }
+  .panel { border:2px solid #1f2933; border-radius:255px 15px 225px 15px / 15px 225px 15px 255px;
+    padding:12px 16px 14px; margin:15px 0; background:rgba(255,255,255,.35); }
+  .panel.t2 { transform:rotate(.4deg); border-radius:15px 225px 15px 255px / 255px 15px 225px 15px; }
+  .panel.t3 { transform:rotate(-.35deg); }
+  .panel h2 { font-size:19px; margin:0 0 6px; }
+  .num { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px;
+    border:2px solid #c1440e; border-radius:50%; color:#c1440e; font-size:15px; margin-right:8px; transform:rotate(-4deg); }
+  .lab { color:#0f6f6c; } .warn { color:#c1440e; }
+  .hl { background:linear-gradient(transparent 55%, #f2c14e 55%); padding:0 2px; }
+  code { font-family:ui-monospace,Menlo,monospace; font-size:14px; background:rgba(15,111,108,.10); padding:1px 4px; border-radius:3px; }
+  .margin { color:#c1440e; font-size:14px; line-height:20px; border-left:2px dashed #c1440e; padding-left:8px; margin:8px 0 0 6px; }
+  .takeaway { border:3px double #1f2933; border-radius:12px; padding:12px 16px; margin:22px 0 6px;
+    background:linear-gradient(transparent 52%, #f2c14e 52%); transform:rotate(-.3deg); font-size:19px; }
+  .bars { font-family:ui-monospace,Menlo,monospace; font-size:15px; line-height:26px; color:#1f2933; }
+  .barc { color:#0f6f6c; } .barw { color:#c1440e; }
+  .colophon { text-align:right; font-family:ui-monospace,Menlo,monospace; font-size:11px; color:#8a94a0; margin-top:26px; }
+  @media print { html,body{background:#fff} body{padding:0;display:block} .sheet{box-shadow:none} * { -webkit-print-color-adjust:exact; print-color-adjust:exact } }
+</style>
+</head>
+<body>
+  <div class="sheet">
+    <h1>Lever 1 result — evidence grounding HURT (and that's the finding)</h1>
+    <div class="under"></div>
+    <p class="sub">claim+evidence cross-encoder vs claim-only baseline · same arch, same hyperparams</p>
+
+    <div class="panel">
+      <h2><span class="num">1</span>the number</h2>
+      <div class="bars">
+        claim-only (baseline) <span class="barc">████████████████████ 0.4049</span><br/>
+        cross-encoder (evidence) <span class="barw">█████████████████ 0.3717</span>  ▼
+      </div>
+      val F1 macro dropped <b>0.4049 → 0.3717</b> = <span class="warn">−0.033 (−8.2%)</span>.
+      <div class="margin">the ONLY difference between the two runs is the evidence in the input.</div>
+    </div>
+
+    <div class="panel t2">
+      <h2><span class="num">2</span>why it hurt</h2>
+      The retrieved passages were <span class="hl">topically related, not verifying</span>
+      (cosine 0.45–0.70). e.g. claim about the <i>Katy Freeway</i> → passage about a
+      <i>different</i> freeway's lane count.
+      <div class="margin">⚠️ topical ≠ verifying. The evidence added noise + ate token budget,
+      diluting the claim signal instead of grounding it.</div>
+    </div>
+
+    <div class="panel t3">
+      <h2><span class="num">3</span>fairness caveat (not hidden)</h2>
+      This run early-stopped at epoch 12 (best @9); the baseline ran all 15, still climbing.
+      BUT this run's val F1 had already peaked and turned down (0.3717 → 0.3611 → …),
+      so more epochs wouldn't have rescued it. <b>Direction is real.</b>
+    </div>
+
+    <div class="panel">
+      <h2><span class="num">4</span>what it means (the contribution)</h2>
+      For RAG-style grounding, <b>retrieval <i>presence</i> is not enough — retrieval
+      <i>quality</i> is the lever.</b> A big on-topic corpus that doesn't actually verify
+      can <span class="warn">degrade</span> a small from-scratch classifier.
+      <div class="margin">infra is now correct (cosine fixed, 32k-passage corpus, 60% coverage) —
+      so this is a clean result, not a plumbing artifact.</div>
+    </div>
+
+    <div class="takeaway">
+      Honest negative result: evidence grounding lowered val F1 (0.4049 → 0.3717).
+      The lesson — <b>verifying evidence, not just topical evidence</b> — is the M5 contribution.
+    </div>
+
+    <div class="colophon">
+      VerifAI_Train_Colab run (T4, 12 epochs) · baseline Run 3 0.4049 — 2026-09-13
+    </div>
+  </div>
+</body>
+</html>

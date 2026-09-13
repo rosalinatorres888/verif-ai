@@ -62,8 +62,15 @@ class ClaimDataset(Dataset):
         self.texts     = df["text"].tolist()
         self.labels    = df["label"].tolist()
         self.languages = df["language"].fillna("en").tolist()
+        # Optional evidence column enables cross-encoder mode (lever 1).
+        # Absent → claim-only, fully backward-compatible.
+        if "evidence" in df.columns:
+            self.evidence = df["evidence"].fillna("").astype(str).tolist()
+        else:
+            self.evidence = None
 
         print(f"  Dataset loaded: {len(self.texts)} examples")
+        print(f"  Mode: {'claim+evidence (cross-encoder)' if self.evidence else 'claim-only'}")
         label_counts = df["label"].value_counts().to_dict()
         print(f"  Labels: {label_counts}")
         lang_counts = df["language"].value_counts().to_dict()
@@ -77,16 +84,28 @@ class ClaimDataset(Dataset):
         label   = self.label2id[self.labels[idx]]
         lang_id = LANG2ID.get(str(self.languages[idx]).lower(), 0)
 
-        input_ids = self.tokenizer.encode(
-            text,
-            max_length=self.max_length,
-            add_special_tokens=True
-        )
+        evidence = self.evidence[idx].strip() if self.evidence else ""
+
+        if evidence:
+            # Cross-encoder: [CLS] claim [SEP] evidence [SEP]
+            input_ids, token_type_ids = self.tokenizer.encode_pair(
+                text, evidence, max_length=self.max_length
+            )
+        else:
+            # Claim-only: segment 0 for every real token (unchanged behavior).
+            input_ids = self.tokenizer.encode(
+                text, max_length=self.max_length, add_special_tokens=True
+            )
+            token_type_ids = [0] * len(input_ids)
+
         input_ids, attention_mask = self.tokenizer.pad(input_ids, self.max_length)
+        # Pad token_type_ids to the same length (pad positions → segment 0).
+        token_type_ids = token_type_ids + [0] * (self.max_length - len(token_type_ids))
 
         return {
             "input_ids":      torch.tensor(input_ids, dtype=torch.long),
             "attention_mask": torch.tensor(attention_mask, dtype=torch.long),
+            "token_type_ids": torch.tensor(token_type_ids, dtype=torch.long),
             "language_id":    torch.tensor(lang_id, dtype=torch.long),
             "label":          torch.tensor(label, dtype=torch.long),
         }

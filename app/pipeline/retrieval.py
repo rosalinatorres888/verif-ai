@@ -21,7 +21,13 @@ from app.pipeline.reranker import score_batch
 
 load_dotenv(dotenv_path=Path(__file__).parent.parent.parent / ".env", override=True)
 
-CHROMA_PATH          = os.path.join(os.path.dirname(__file__), "../../corpus/chroma_db")
+# v2 corpus: larger independent static corpus with NORMALIZED embeddings so the
+# `1 - dist/2` cosine conversion is correct. v1 (corpus/chroma_db) is preserved
+# for rollback/provenance. Override via env for experiments.
+CHROMA_PATH          = os.environ.get(
+    "VERIFAI_CHROMA_PATH",
+    os.path.join(os.path.dirname(__file__), "../../corpus/chroma_db_v2"))
+CHROMA_COLLECTION    = os.environ.get("VERIFAI_CHROMA_COLLECTION", "verif-ai-corpus-v2")
 SOURCES_PATH         = os.path.join(os.path.dirname(__file__), "../../corpus/sources.json")
 SIMILARITY_THRESHOLD = 0.65   # ChromaDB minimum
 TAVILY_MIN_SCORE     = 0.60   # Fix 2: minimum Tavily relevance score
@@ -61,7 +67,7 @@ def _load_chroma():
     global _chroma_client, _collection
     if _collection is None:
         _chroma_client = chromadb.PersistentClient(path=os.path.abspath(CHROMA_PATH))
-        _collection = _chroma_client.get_or_create_collection("verif-ai-corpus")
+        _collection = _chroma_client.get_or_create_collection(CHROMA_COLLECTION)
     return _collection
 
 
@@ -182,7 +188,10 @@ def retrieve_evidence(extracted_assertion: str, language: str) -> list:
     collection     = _load_chroma()
     credibility_map = _load_credibility()
 
-    query_embedding = model.encode(extracted_assertion).tolist()
+    # Normalize the query embedding so squared-L2 distance == 2*(1 - cosine),
+    # which makes the `1 - dist/2` conversion below recover true cosine similarity.
+    # The corpus embeddings must be normalized at build time to match.
+    query_embedding = model.encode(extracted_assertion, normalize_embeddings=True).tolist()
 
     results = collection.query(
         query_embeddings=[query_embedding],
