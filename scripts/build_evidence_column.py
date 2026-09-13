@@ -67,6 +67,12 @@ def parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--allow-web", action="store_true",
                    help="Allow Tavily web supplementation (default: corpus-only). "
                         "Discouraged for eval-overlapping splits — contamination risk.")
+    p.add_argument("--min-similarity", type=float, default=None,
+                   help="Override retrieval SIMILARITY_THRESHOLD for this build "
+                        "(e.g. 0.45). App default (0.65) is left unchanged.")
+    p.add_argument("--fast", action="store_true",
+                   help="Skip the reranker cross-encoder; rank by similarity*credibility only. "
+                        "Much faster for large CSVs; ranking is near-identical for corpus-only.")
     p.add_argument("--overwrite", action="store_true",
                    help="Re-retrieve rows that already have evidence (default: only fill blanks)")
     p.add_argument("--limit", type=int, default=None, help="Process only the first N rows (for testing)")
@@ -89,6 +95,14 @@ def main(argv=None) -> int:
     else:
         print("[mode] ⚠️  WEB-ENABLED (Tavily). Do not use on splits that overlap an evaluation benchmark.")
 
+    # --- per-build overrides (do not mutate app defaults on disk) --------------
+    if args.min_similarity is not None:
+        retrieval.SIMILARITY_THRESHOLD = args.min_similarity
+        print(f"[cfg] SIMILARITY_THRESHOLD overridden to {args.min_similarity} for this build")
+    if args.fast:
+        retrieval.score_batch = lambda q, passages, lang: [1.0] * len(passages)
+        print("[cfg] FAST mode: reranker cross-encoder skipped")
+
     df = pd.read_csv(in_path)
     if args.text_col not in df.columns:
         print(f"[error] text column '{args.text_col}' not in {list(df.columns)}", file=sys.stderr)
@@ -101,7 +115,7 @@ def main(argv=None) -> int:
     print(f"[build] {n} rows → {out_path}  (top_k={args.top_k}, max_chars={args.max_chars})")
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    filled = skipped = failed = 0
+    filled = no_match = skipped = failed = 0
 
     for i in range(n):
         existing = str(df.at[i, args.evidence_col]).strip()
@@ -113,10 +127,14 @@ def main(argv=None) -> int:
         language = str(df.at[i, args.lang_col]).lower() if args.lang_col in df.columns else "en"
 
         try:
-            df.at[i, args.evidence_col] = build_evidence_text(
+            evidence_text = build_evidence_text(
                 claim, language, args.top_k, args.max_chars, args.sep
             )
-            filled += 1
+            df.at[i, args.evidence_col] = evidence_text
+            if evidence_text:
+                filled += 1        # got real evidence above threshold
+            else:
+                no_match += 1      # retrieval ran but nothing passed threshold → claim-only
         except Exception as e:  # never let one bad row abort the whole build
             df.at[i, args.evidence_col] = ""
             failed += 1
@@ -124,12 +142,15 @@ def main(argv=None) -> int:
 
         if (i + 1) % CHECKPOINT_EVERY == 0:
             df.to_csv(out_path, index=False)
-            print(f"  ...{i + 1}/{n} (filled={filled} skipped={skipped} failed={failed})")
+            print(f"  ...{i + 1}/{n} (filled={filled} no_match={no_match} "
+                  f"skipped={skipped} failed={failed})")
 
     df.to_csv(out_path, index=False)
-    empty = int((df[args.evidence_col].str.len() == 0).sum())
-    print(f"[done] filled={filled} skipped={skipped} failed={failed} | "
-          f"rows still empty (no corpus match): {empty}")
+    processed = filled + no_match + failed
+    coverage = (filled / processed * 100) if processed else 0.0
+    print(f"[done] filled={filled} no_match={no_match} skipped={skipped} failed={failed}")
+    print(f"[done] evidence coverage: {filled}/{processed} = {coverage:.1f}% "
+          f"(rest fall back to claim-only)")
     print(f"[done] wrote {out_path}")
     return 0
 
